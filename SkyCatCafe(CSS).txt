@@ -1,0 +1,173 @@
+/* ===============================================================
+   ABOUT COZY SCENE | ONLY this pixel-art café diorama
+   Brown wooden frame and all other sections are unchanged.
+   Original transparent PNG assets from user's ZIP are embedded.
+   =============================================================== */
+body.single-demo .view-about .cozy-scene {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  height: 254px;
+  margin-top: 18px;
+  overflow: hidden;
+  border: 2px solid #b6dcee !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, #f0faff 0%, #e2f4fd 70%, #f6e9d5 70%, #d9b48d 100%) !important;
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.67), 0 4px 12px rgba(59,99,124,.10);
+}
+body.single-demo .view-about .cozy-scene::before {
+  content:"";
+  position:absolute;
+  top:15px;
+  left:13px;
+  right:13px;
+  bottom:14px;
+  border-radius:10px;
+  pointer-events:none;
+  border:1px solid rgba(165,202,217,.60);
+  z-index:7;
+}
+body.single-demo .view-about .cozy-scene::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:70%;
+  height:7px;
+  background:linear-gradient(180deg,#b98655,#edd1a7 45%,#a77149 100%);
+  border-top:1px solid #fff5e6;
+  z-index:1;
+}
+body.single-demo .view-about .cozy-scene .scene-wall-line {
+  position:absolute;
+  width:100%; height:2px; left:0; top:14%;
+  background:rgba(170,211,235,.45);
+  box-shadow:0 19px rgba(186,217,234,.3);
+  z-index:0;
+}
+body.single-demo .view-about .cozy-scene .scene-floor {
+  position:absolute;
+  left:0; right:0; bottom:0; height:29%;
+  background:repeating-linear-gradient(90deg,
+     rgba(255,253,247,.20) 0px, rgba(255,253,247,.20) 2px,
+     transparent 3px, transparent 68px),
+     repeating-linear-gradient(0deg,
+       transparent 0px, transparent 31px,
+       rgba(123,79,44,.12) 31px, rgba(123,79,44,.12) 33px);
+  z-index:0;
+}
+body.single-demo .view-about .cozy-scene .scene-window {
+  position:absolute;
+  top:34px;
+  width:22%;
+  height:132px;
+  border:7px solid #dba86d;
+  border-bottom-width:11px;
+  border-radius:35px 35px 8px 8px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.38),transparent 52%),
+    linear-gradient(170deg,#a5dcfa,#d8f4fe 72%,#9fd2e7);
+  box-shadow:0 4px 0 #a36c40, inset 0 0 0 3px #fff5e6;
+  z-index:0;
+}
+body.single-demo .view-about .cozy-scene .scene-window::before {
+  content:"";
+  position:absolute;
+  left:49%; top:0; bottom:0;
+  width:5px;
+  background:#f9e9cb;
+  box-shadow:1px 0 0 #c68e59;
+}
+body.single-demo .view-about .cozy-scene .scene-window::after {
+  content:"";
+  position:absolute;
+  height:6px; background:#f7e7cd;
+  top:52%; left:0; right:0;
+  box-shadow:0 2px 0 #cb9762;
+}
+body.single-demo .view-about .cozy-scene .scene-window-left {left:7%;}
+body.single-demo .view-about .cozy-scene .scene-window-right {right:8%; width:19%;}
+
+body.single-demo .view-about .cozy-scene .scene-floor-rug {
+  position:absolute;
+  width:51%; height:20px;
+  bottom:12px; left:25%;
+  background:#c2e5f4;
+  border:2px solid #8dbbd6;
+  border-radius:50%;
+  opacity:.80;
+  z-index:1;
+}
+body.single-demo .view-about .cozy-scene img {
+  position:absolute;
+  height:auto;
+  object-fit:contain;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 4px 1px rgba(30,61,81,.11));
+}
+body.single-demo .view-about .cozy-scene .scene-spark {
+  z-index:3;
+  width:30px;
+  top:35px;
+  left:5%;
+}
+body.single-demo .view-about .cozy-scene .scene-lamp {
+  z-index:5;
+  width:67px;
+  top:-19px;
+  left:46%;
+  transform:translateX(-50%);
+}
+body.single-demo .view-about .cozy-scene .scene-chair {
+  z-index:3;
+  width:130px;
+  left:22%;
+  bottom:16px;
+}
+body.single-demo .view-about .cozy-scene .scene-table {
+  z-index:4;
+  width:186px;
+  left:38%;
+  bottom:14px;
+}
+body.single-demo .view-about .cozy-scene .scene-cat {
+  z-index:4;
+  width:164px;
+  right:7.5%;
+  bottom:14px;
+}
+body.single-demo .view-about .cozy-scene .scene-plant {
+  z-index:5;
+  width:60px;
+  left:2%;
+  bottom:15px;
+}
+@media(max-width: 767px) {
+  body.single-demo .view-about .cozy-scene {
+    height:206px;
+    margin-top:15px;
+    border-radius:13px !important;
+  }
+  body.single-demo .view-about .cozy-scene .scene-window {
+    top:30px; height:102px;
+    border-width:5px; border-bottom-width:8px;
+    border-radius:22px 22px 5px 5px;
+  }
+  body.single-demo .view-about .cozy-scene .scene-window-left {left:4%; width:26%;}
+  body.single-demo .view-about .cozy-scene .scene-window-right {right:3%; width:22%;}
+  body.single-demo .view-about .cozy-scene .scene-spark {width:23px;left:5%; top:18px;}
+  body.single-demo .view-about .cozy-scene .scene-lamp {width:43px; left:50%;top:-14px;}
+  body.single-demo .view-about .cozy-scene .scene-chair {width:84px; left:14%; bottom:15px;}
+  body.single-demo .view-about .cozy-scene .scene-table {width:113px;left:34%; bottom:14px;}
+  body.single-demo .view-about .cozy-scene .scene-cat {width:99px;right:1%; bottom:13px;}
+  body.single-demo .view-about .cozy-scene .scene-plant {width:38px;left:1%; bottom:17px;}
+  body.single-demo .view-about .cozy-scene .scene-floor-rug {left:17%;width:72%;height:14px;bottom:10px;}
+}
+@media (max-width: 359px) {
+  body.single-demo .view-about .cozy-scene {height:182px;}
+  body.single-demo .view-about .cozy-scene .scene-window {height:91px;}
+  body.single-demo .view-about .cozy-scene .scene-chair {width:72px; left:13%;}
+  body.single-demo .view-about .cozy-scene .scene-table {width:100px;left:32%;}
+  body.single-demo .view-about .cozy-scene .scene-cat {width:86px; right:0%;}
+  body.single-demo .view-about .cozy-scene .scene-plant {width:35px;left:0;}
+}
