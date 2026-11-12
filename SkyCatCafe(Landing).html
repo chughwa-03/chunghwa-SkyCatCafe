@@ -7426,7 +7426,108 @@ body.single-demo .demo-form .stage5-form-actions {
     font-size: 12px;
   }
 }
-  </style>
+  
+/* ================================================================
+   메인 버튼 - 컴팩트 공통 규격 (디자인과 링크는 원본 유지)
+   ================================================================ */
+:root {
+  --cafe-button-blue-top: #44b3e7;
+  --cafe-button-blue-bottom: #198fc9;
+  --cafe-button-blue-border: #1288bf;
+  --cafe-button-blue-hover-top: #52bfef;
+  --cafe-button-blue-hover-bottom: #1986c2;
+  --cafe-button-width: 218px;
+  --cafe-button-height: 42px;
+  --cafe-button-icon: 20px;
+  --cafe-button-font: 13.5px;
+}
+
+/* 2개 버튼의 배치, 간격과 크기를 동일하게 조정 */
+body.single-demo .hero-copy .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+body.single-demo .hero-copy .button-row > a.btn {
+  display: inline-flex;
+  flex: 0 1 var(--cafe-button-width);
+  width: var(--cafe-button-width);
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--cafe-button-height);
+  height: var(--cafe-button-height);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 2px solid var(--cafe-button-blue-border) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg,
+    var(--cafe-button-blue-top) 0%,
+    var(--cafe-button-blue-bottom) 100%) !important;
+  color: #fff !important;
+  font-family: inherit;
+  font-size: var(--cafe-button-font) !important;
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(1,61,101,.18) !important;
+  box-shadow: 0 5px 15px rgba(20,121,181,.16) !important;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+body.single-demo .hero-copy .button-row > a.btn:hover,
+body.single-demo .hero-copy .button-row > a.btn:focus-visible {
+  border-color: #087cac !important;
+  background: linear-gradient(180deg,
+    var(--cafe-button-blue-hover-top) 0%,
+    var(--cafe-button-blue-hover-bottom) 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(13,113,174,.25) !important;
+}
+
+/* 메뉴 아이콘과 원본 PNG의 표시 영역을 20x20px로 맞춤 */
+body.single-demo .hero-copy .button-row .menu-button-icon,
+body.single-demo .hero-copy .button-row .official-home-paw {
+  display: inline-flex;
+  flex: 0 0 var(--cafe-button-icon);
+  width: var(--cafe-button-icon);
+  height: var(--cafe-button-icon);
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  vertical-align: middle;
+}
+body.single-demo .hero-copy .button-row .menu-button-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+body.single-demo .hero-copy .button-row .official-home-paw {
+  display: block;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+body.single-demo .hero-copy .button-row .button-label {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+@media (max-width: 359px) {
+  body.single-demo .hero-copy .button-row {
+    gap: 8px;
+  }
+}
+</style>
  </head>
  <body class="renewed-website single-demo">
   <header class="site-header sky-header" id="top">
@@ -7509,10 +7610,12 @@ body.single-demo .demo-form .stage5-form-actions {
        </p>
        <div class="button-row">
         <a class="btn btn-primary" href="#view-menu">
-         ☕ 사이트 메뉴 둘러보기 ›
+         <span class="menu-button-icon" aria-hidden="true">☕</span>
+         <span class="button-label">사이트 메뉴 둘러보기 ›</span>
         </a>
-        <a class="btn btn-secondary" href="#website-preview">
-         ▣ 실제 화면 미리보기 ›
+        <a class="btn btn-live-site" href="https://chughwa-03.github.io/HTML/" target="_blank" rel="noopener noreferrer" aria-label="하늘고양이 공식홈페이지 새 탭에서 열기">
+         <img class="official-home-paw" src="data:image/png;base64,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" alt="" aria-hidden="true" width="24" height="24" decoding="async"/>
+         <span class="button-label">하늘고양이 공식홈페이지 ›</span>
         </a>
        </div>
       </div>

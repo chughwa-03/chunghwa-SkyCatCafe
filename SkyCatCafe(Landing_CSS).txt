@@ -1,3 +1,11 @@
+/* ====================================================================
+   하늘고양이 카페 랜딩페이지 | style.css
+   --------------------------------------------------------------------
+   HTML 파일: index.html
+   이미지 원본: assets/ 폴더
+   주의: 기존 디자인과 화면 전환을 보존하기 위해 CSS 규칙 순서를 유지합니다.
+   색상과 크기 조절은 주로 아래쪽 공통 버튼 규격 변수를 수정하세요.
+   ==================================================================== */
 /* 하늘고양이 카페 | 원본 시각 디자인 정리본 (HTML/CSS 전용) */
 :root {
   --white: #fff;
@@ -95,7 +103,7 @@ h3 {
   inset: 0;
   position: absolute;
   z-index: -1;
-  background-image: url("assets/visual-01-1d51639677.webp");
+  background-image: url("assets/asset-001.webp");
   background-position: center;
   background-repeat: repeat;
   opacity: 0.18;
@@ -2023,7 +2031,7 @@ body {
   top: 13%;
   width: 92px;
   height: 92px;
-  background: url("assets/visual-02-99f06bea4c.webp")
+  background: url("assets/asset-002.webp")
           center / contain no-repeat;
   pointer-events: none;
   opacity: 0.92;
@@ -2072,7 +2080,7 @@ body {
   top: 7%;
   width: 49px;
   height: 49px;
-  background: url("assets/visual-03-40af032752.webp")
+  background: url("assets/asset-003.webp")
           center / contain no-repeat;
   pointer-events: none;
   filter: drop-shadow(1px 2px 0 #fff);
@@ -2097,7 +2105,7 @@ body {
   left: 0;
   right: 0;
   height: 23px;
-  background: url("assets/visual-04-56b7f9261d.webp")
+  background: url("assets/asset-004.webp")
           left bottom / 160px auto repeat-x;
   opacity: 0.58;
 }
@@ -3019,7 +3027,7 @@ body {
   z-index: 0;
   pointer-events: none;
   opacity: 0.56;
-  background: url("assets/visual-05-047afdc835.webp")
+  background: url("assets/asset-005.webp")
           left top / contain no-repeat;
 }
 
@@ -3324,7 +3332,7 @@ body {
             rgb(202 236 255 / 92%),
             rgb(248 253 255 / 93%)
           ),
-          url("assets/visual-01-1d51639677.webp")
+          url("assets/asset-001.webp")
             center top / 470px auto repeat;
   border-bottom: 4px solid var(--board-navy);
   box-shadow: 0 4px 0 #79c5f6,
@@ -3620,7 +3628,7 @@ input, select, textarea {
             rgb(232 249 255 / 93%),
             rgb(202 237 255 / 93%)
           ),
-          url("assets/visual-01-1d51639677.webp")
+          url("assets/asset-001.webp")
             center top / 470px auto repeat;
 }
 
@@ -7413,5 +7421,106 @@ body.single-demo .demo-form .stage5-form-actions {
     gap: 4px !important;
     padding-inline: 3px !important;
     font-size: 12px;
+  }
+}
+  
+/* ================================================================
+   메인 버튼 - 컴팩트 공통 규격 (디자인과 링크는 원본 유지)
+   ================================================================ */
+:root {
+  --cafe-button-blue-top: #44b3e7;
+  --cafe-button-blue-bottom: #198fc9;
+  --cafe-button-blue-border: #1288bf;
+  --cafe-button-blue-hover-top: #52bfef;
+  --cafe-button-blue-hover-bottom: #1986c2;
+  --cafe-button-width: 218px;
+  --cafe-button-height: 42px;
+  --cafe-button-icon: 20px;
+  --cafe-button-font: 13.5px;
+}
+
+/* 2개 버튼의 배치, 간격과 크기를 동일하게 조정 */
+body.single-demo .hero-copy .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+body.single-demo .hero-copy .button-row > a.btn {
+  display: inline-flex;
+  flex: 0 1 var(--cafe-button-width);
+  width: var(--cafe-button-width);
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--cafe-button-height);
+  height: var(--cafe-button-height);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 2px solid var(--cafe-button-blue-border) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg,
+    var(--cafe-button-blue-top) 0%,
+    var(--cafe-button-blue-bottom) 100%) !important;
+  color: #fff !important;
+  font-family: inherit;
+  font-size: var(--cafe-button-font) !important;
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(1,61,101,.18) !important;
+  box-shadow: 0 5px 15px rgba(20,121,181,.16) !important;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+body.single-demo .hero-copy .button-row > a.btn:hover,
+body.single-demo .hero-copy .button-row > a.btn:focus-visible {
+  border-color: #087cac !important;
+  background: linear-gradient(180deg,
+    var(--cafe-button-blue-hover-top) 0%,
+    var(--cafe-button-blue-hover-bottom) 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(13,113,174,.25) !important;
+}
+
+/* 메뉴 아이콘과 원본 PNG의 표시 영역을 20x20px로 맞춤 */
+body.single-demo .hero-copy .button-row .menu-button-icon,
+body.single-demo .hero-copy .button-row .official-home-paw {
+  display: inline-flex;
+  flex: 0 0 var(--cafe-button-icon);
+  width: var(--cafe-button-icon);
+  height: var(--cafe-button-icon);
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  vertical-align: middle;
+}
+body.single-demo .hero-copy .button-row .menu-button-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+body.single-demo .hero-copy .button-row .official-home-paw {
+  display: block;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+body.single-demo .hero-copy .button-row .button-label {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+@media (max-width: 359px) {
+  body.single-demo .hero-copy .button-row {
+    gap: 8px;
   }
 }
