@@ -5752,12 +5752,6 @@
         z-index: 4;
       }
 
-      #full-menu
-        .graphic-overlay-row:has(.order-check:checked)
-        .order-check-mark {
-        display: flex;
-      }
-
       #full-menu .graphic-overlay-row:has(.order-check:focus-visible) {
         outline: 3px solid #ffb400 !important;
         outline-offset: 2px;
@@ -6452,7 +6446,7 @@
           flex-basis: 42px;
         }
       }
-    
+
 
 /* JavaScript enhancements */
 /* SkyCatCafe Official | additive JS styles. Original embedded CSS is untouched. */
@@ -6739,7 +6733,6 @@ html:is([lang=en],[lang=ja]) #full-menu .poster-filter{white-space:normal;max-wi
   position:relative;display:grid;place-items:center;width:61px;height:61px;flex:none;
   background:linear-gradient(145deg,#f3faff,#ceebff);border:1px solid #b9def5;border-radius:18px;color:#246b9b;
 }
-.sc-service-emblem svg{width:33px;height:33px;shape-rendering:crispEdges}
 .sc-service-number{
   position:absolute;right:-6px;bottom:-5px;background:#fff;border:1px solid #b9def5;border-radius:999px;
   padding:3px 6px;width:auto;height:auto;font-size:.68rem;color:#286b99;line-height:1.2;
