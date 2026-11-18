@@ -66,16 +66,12 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const html = document.documentElement;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const motionKey = 'skycat:landing:v17:motion';
+  try { if (localStorage.getItem(motionKey) === 'off') html.dataset.motion = 'off'; } catch (_) {}
+  const motionReduced = () => motion.matches || html.dataset.motion === 'off';
   const mobile = window.matchMedia('(max-width: 960px)');
   const storageKey = 'skycat:landing:v2:language';
 
-  // Set reservation only after the official homepage has a verified destination.
-  const official = Object.freeze({
-    base: './index(order).html',
-    menu: '#full-menu',
-    visit: '#visit',
-    reservation: '#services'
-  });
 
   // Static Korean markup is the default and fallback; EN / JA are keyed by the
   // same stable identifiers. Brand and section English labels are intentional.
@@ -207,8 +203,10 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
       localeNodes.push({node, key, target});
     }
   }
-  const state = {lang:'ko', navOpen:false, manualPause:false, visibleGallery:false, modalOpen:false, galleryFocus:false, hover:false};
+  const state = {lang:'ko', navOpen:false, manualPause:false, visibleGallery:false, modalOpen:false, galleryFocus:false};
   let swiper = null, modalSource = null;
+  let galleryTimer = null, galleryFrame = null;
+  const galleryDelay = 3500;
   function tr(key) {
     const index = state.lang === 'en' ? 0 : state.lang === 'ja' ? 1 : -1;
     return (index >= 0 && translations[key]?.[index]) || korean[key] || key;
@@ -225,32 +223,28 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     }
     for (const node of $$('[data-price]')) {
       const number = Number(node.dataset.price).toLocaleString(state.lang === 'ko' ? 'ko-KR' : state.lang === 'ja' ? 'ja-JP' : 'en-US');
-      node.textContent = state.lang === 'ko' ? number + '원' : state.lang === 'ja' ? number + 'ウォン' : number + ' KRW';
+      node.textContent = globalThis.SkyCatCurrency?.format(Number(node.dataset.price),state.lang) ?? (number+'원');
     }
+    globalThis.SkyCatCurrency?.updateNote(document,state.lang);
     updateNavLabel();
     updateGalleryLabels();
     if (modalSource) updateDialog();
-    if (save) { try { localStorage.setItem(storageKey,state.lang); } catch (_) { /* storage blocked */ } }
+    if (save) { globalThis.SkyCatLocale?.save(state.lang); try { localStorage.setItem(storageKey,state.lang); } catch (_) { /* storage blocked */ } }
+    try { sessionStorage.setItem('skycat:locale',state.lang); } catch (_) { /* storage blocked */ }
     if (html.classList.contains('aos-ready')) window.AOS?.refresh();
     swiper?.update();
     queueScroll();
   }
   function initLanguage() {
     let initial = 'ko';
-    try { initial = localStorage.getItem(storageKey) || initial; } catch (_) {}
+    try { initial = sessionStorage.getItem('skycat:locale') || localStorage.getItem(storageKey) || initial; } catch (_) {}
     $('#language').addEventListener('change', event => setLanguage(event.target.value));
-    setLanguage(initial,false);
+    setLanguage(globalThis.SkyCatLocale?.read()||initial,false);
+    globalThis.SkyCatLocale?.subscribe(next=>{if(next!==state.lang)setLanguage(next,false);});
   }
   function initOfficialLinks() {
-    for (const link of $$('[data-official]')) {
-      const type = link.dataset.official;
-      link.href = new URL(type === 'menu' ? official.menu : type === 'visit' ? official.visit : '',new URL(official.base,location.href)).href;
-    }
-    if (official.reservation) {
-      $('#reservation-link').href = new URL(official.reservation,new URL(official.base,location.href)).href;
-      $('#reservation-link').hidden = false;
-      $('#reservation-note').hidden = true;
-    }
+    const link=$('[data-official="home"]');
+    if(link)link.href='./index(order).html';
   }
   const toggle = $('#nav-toggle'), nav = $('#navigation');
   function updateNavLabel() {
@@ -264,7 +258,7 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     if (returnFocus) toggle.focus();
   }
   function scrollToTarget(target) {
-    target.scrollIntoView({behavior:motion.matches ? 'instant' : 'smooth',block:'start'});
+    target.scrollIntoView({behavior:motionReduced() ? 'instant' : 'smooth',block:'start'});
   }
   // L01 / L06: normal anchors remain functional without JavaScript.
   function initNavigation() {
@@ -324,7 +318,7 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     window.addEventListener('resize',queueScroll,{passive:true});
     $('#back-top').addEventListener('click',() => {
       if (location.hash !== '#home') history.pushState(null,'','#home');
-      window.scrollTo({top:0,behavior:motion.matches ? 'instant' : 'smooth'});
+      window.scrollTo({top:0,behavior:motionReduced() ? 'instant' : 'smooth'});
       $('#home').setAttribute('tabindex','-1');
       $('#home').focus({preventScroll:true});
     });
@@ -333,9 +327,9 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
   // L03: the original locally bundled Swiper, 5 real images and no dependence on CDN.
   function updateGalleryLabels() {
     const play = $('#gallery-play');
-    play.textContent = tr(motion.matches ? 'motionPaused' : state.manualPause ? 'play' : 'pause');
-    play.disabled = motion.matches;
-    play.setAttribute('aria-pressed',String(state.manualPause || motion.matches));
+    play.textContent = tr(motionReduced() ? 'motionPaused' : state.manualPause ? 'play' : 'pause');
+    play.disabled = motionReduced();
+    play.setAttribute('aria-pressed',String(state.manualPause || motionReduced()));
     if (!swiper) return;
     $('#gallery-count').textContent = String(swiper.realIndex+1).padStart(2,'0')+' / 05';
     $$('#gallery-pagination .swiper-pagination-bullet').forEach((bullet,index) => {
@@ -349,29 +343,45 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
       if (link) link.tabIndex = isActive ? 0 : -1;
     }
   }
-  function syncAutoplay() {
-    if (!swiper || !swiper.autoplay) return;
-    const blocked = !state.visibleGallery || state.manualPause || state.modalOpen || state.galleryFocus || state.hover || motion.matches || document.hidden;
-    if (blocked && swiper.autoplay.running) swiper.autoplay.stop();
-    if (!blocked && !swiper.autoplay.running) swiper.autoplay.start();
+  // V15: one explicit timer, independent of Swiper's internal autoplay lifecycle.
+  function clearGalleryTimer() {
+    if (galleryTimer !== null) { clearTimeout(galleryTimer); galleryTimer = null; }
+  }
+  function galleryBlocked() {
+    return !swiper || swiper.destroyed || !state.visibleGallery || state.manualPause || state.modalOpen || state.galleryFocus || motionReduced() || document.hidden;
+  }
+  function syncAutoplay(reset = false) {
+    if (reset === true || galleryBlocked()) clearGalleryTimer();
+    if (!galleryBlocked() && galleryTimer === null) {
+      galleryTimer = setTimeout(() => {
+        galleryTimer = null;
+        if (galleryBlocked()) return;
+        swiper.slideNext();
+        syncAutoplay();
+      }, galleryDelay);
+    }
     updateGalleryLabels();
   }
   function galleryVisibility() {
     const rect = $('#gallery-swiper').getBoundingClientRect();
     const visibleHeight = Math.min(rect.bottom,innerHeight)-Math.max(rect.top,0);
-    state.visibleGallery = visibleHeight > Math.min(rect.height*.25,150);
+    state.visibleGallery = rect.height > 0 && visibleHeight >= Math.min(rect.height*.25,150);
     syncAutoplay();
+  }
+  function queueGalleryVisibility() {
+    if (galleryFrame !== null) return;
+    galleryFrame = requestAnimationFrame(() => { galleryFrame = null; galleryVisibility(); });
   }
   function initGallery() {
     if (typeof window.Swiper !== 'function') return; // static link grid fallback
     const root = $('#gallery-swiper');
     swiper = new window.Swiper(root,{
-      slidesPerView:1, spaceBetween:12, loop:true, speed:motion.matches ? 0 : 450,
-      autoplay:{enabled:false, delay:5000, disableOnInteraction:false},
+      slidesPerView:1, spaceBetween:12, loop:true, speed:motionReduced() ? 0 : 450,
+      autoplay:false,
       navigation:{prevEl:'#gallery-prev',nextEl:'#gallery-next'},
       pagination:{el:'#gallery-pagination',clickable:true,renderBullet:(index,className)=>'<button type="button" class="'+className+'"></button>'},
       a11y:{enabled:false},
-      on:{slideChange:()=>requestAnimationFrame(updateGalleryLabels)}
+      on:{slideChange:()=>requestAnimationFrame(()=>syncAutoplay(true))}
     });
     $('.gallery-controls').hidden = false;
     const shell = $('.gallery-shell');
@@ -381,15 +391,19 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
       if (event.key === 'ArrowLeft') swiper.slidePrev();
       else swiper.slideNext();
     });
-    root.addEventListener('focusin',()=>{state.galleryFocus=true;syncAutoplay();});
+    // Keep keyboard focus safe, but a hovering mouse must not freeze the slide show.
+    root.addEventListener('focusin',event=>{state.galleryFocus=event.target.matches(':focus-visible');syncAutoplay();});
     root.addEventListener('focusout',event=>{if(!root.contains(event.relatedTarget)){state.galleryFocus=false;syncAutoplay();}});
-    root.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'){state.hover=true;syncAutoplay();}});
-    root.addEventListener('pointerleave',()=>{state.hover=false;syncAutoplay();});
     $('#gallery-play').addEventListener('click',()=>{state.manualPause=!state.manualPause;syncAutoplay();});
     document.addEventListener('visibilitychange',syncAutoplay);
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(galleryVisibility,{threshold:[0,.25,.5,1]}).observe(root);
-    } else window.addEventListener('scroll',galleryVisibility,{passive:true});
+    }
+    window.addEventListener('scroll',queueGalleryVisibility,{passive:true});
+    window.addEventListener('resize',queueGalleryVisibility,{passive:true});
+    window.addEventListener('load',galleryVisibility,{once:true});
+    window.addEventListener('pagehide',clearGalleryTimer);
+    window.addEventListener('pageshow',galleryVisibility);
     updateGalleryLabels();
     galleryVisibility();
   }
@@ -438,8 +452,8 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     window.addEventListener('load',()=>window.AOS.refresh(),{once:true});
   }
   function updateMotion() {
-    html.classList.toggle('motion-reduced',motion.matches);
-    if (swiper) { swiper.params.speed=motion.matches ? 0 : 450;syncAutoplay(); }
+    html.classList.toggle('motion-reduced',motionReduced());
+    if (swiper) { swiper.params.speed=motionReduced() ? 0 : 450;syncAutoplay(); }
     if (html.classList.contains('aos-ready')) window.AOS.refresh();
     updateGalleryLabels();
   }
@@ -449,4 +463,309 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
   // Isolate independent features so an unavailable vendor never hides the page.
   [initOfficialLinks,initNavigation,initScroll,initLanguage,initPhotoModal,initGallery,initAOS,updateMotion].forEach(safeInit);
   motion.addEventListener('change',updateMotion);
+  window.addEventListener('skycat:motion-change',updateMotion);
+})();
+
+/* V14 — brand experience, local preferences and original synthesized audio. */
+(() => {
+  'use strict';
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const html=document.documentElement, motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const preferencesKey='skycat:landing:v14:mood', welcomeKey='skycat:landing:v14:welcomed';
+  const translations={
+    moodTitle:['오늘의 하늘을 골라요','Choose your sky today','今日の空を選ぼう'],
+    timeLabel:['시간대','Time of day','時間帯'],seasonLabel:['계절','Season','季節'],auto:['자동','Auto','自動'],
+    day:['낮 ☀','Day ☀','昼 ☀'],night:['밤 ☾','Night ☾','夜 ☾'],
+    spring:['봄','Spring','春'],summer:['여름','Summer','夏'],autumn:['가을','Autumn','秋'],winter:['겨울','Winter','冬'],
+    soundLabel:['공간의 소리','Sounds of the cafe','カフェの音'],ambient:['환경음','Ambience','環境音'],volumeLabel:['음량','Volume','音量'],
+    soundHelp:['음악과 환경음은 직접 켜야 재생됩니다. 실제 시간 기준은 한국 시간입니다.','Music and ambience start only when you turn them on. Automatic time uses KST.','音楽と環境音は操作してから再生されます。自動時間は韓国標準時です。'],
+    soundError:['이 브라우저에서는 소리를 재생할 수 없습니다.','Audio is unavailable in this browser.','このブラウザでは音声を再生できません。'],
+    soundPlaying:['선택한 소리를 재생 중입니다.','Your selected sounds are playing.','選択した音を再生しています。'],
+    designTitle:['하늘빛에 담은 브랜드 디자인','A brand inspired by the sky','空色に込めたブランドデザイン'],
+    designDesc:['색상, 심볼, 타이포그래피가 하나의 포근한 경험으로 이어집니다.','Color, symbols and typography create one cozy experience.','色、シンボル、文字が心地よい体験につながります。'],
+    logoTitle:['하늘고양이 심볼','The Sky Cat symbol','空猫のシンボル'],logoDesc:['고양이와 하늘빛을 결합해 친근하고 편안한 첫인상을 완성했습니다.','A cat and sky blue create a friendly, calm first impression.','猫と空色で親しみやすく穏やかな第一印象を演出します。'],
+    skyBlue:['하늘색','Sky blue','空色'],cloudWhite:['구름빛','Cloud white','雲色'],deepBlue:['깊은 하늘','Deep sky','深い空'],
+    colorTitle:['시그니처 팔레트','Signature palette','シグネチャーパレット'],colorDesc:['맑은 하늘색과 흰색으로 청량함을, 깊은 파란색으로 가독성을 살렸습니다.','Fresh sky blue and white meet deep blue for readability.','爽やかな空色と白に、読みやすい深い青を合わせました。'],
+    typeTitle:['따뜻하고 단정한 글자','Warm, simple typography','温かく端正な文字'],typeDesc:['제목은 선명하고 본문은 편안하게 읽히도록 글자 크기와 여백을 구성했습니다.','Clear headings and comfortable spacing make reading effortless.','明快な見出しと心地よい余白で読みやすくしました。'],
+    mascotIdle:['안녕! 나와 인사해 볼래요?','Hello! Would you like to say hi?','こんにちは！あいさつしてみませんか？'],
+    mascotGift:['선물하기','Give a gift','贈り物'],mascotCoffee:['커피 부탁하기','Ask for coffee','コーヒーをお願い'],mascotRest:['쉬게 하기','Let me rest','休ませる'],
+    reaction0:['고마워요! 마음에 쏙 드는 선물이에요.','Thank you! What a lovely gift.','ありがとう！素敵なプレゼントですね。'],
+    reaction1:['정성을 담아 커피 한 잔 준비할게요!','One cozy cup of coffee, coming right up!','心を込めて一杯お淹れします！'],
+    reaction2:['구름 위에서 잠깐 낮잠 잘게요.','Time for a little cloud nap.','雲の上で少しお昼寝します。'],
+    mascotInteract:['하늘고양이와 인사하기','Greet Sky Cat','空猫にあいさつ'],
+    transitionText:['포근한 하늘빛으로 이동 중…','Drifting into a cozy sky…','心地よい空色へ移動中…'],
+    closeWelcome:['환영 메시지 닫기','Dismiss welcome message','歓迎メッセージを閉じる'],
+    welcomeDay:['어서 오세요, 하늘고양이 카페예요!','Welcome to Sky Cat Cafe!','空猫カフェへようこそ！'],
+    welcomeNight:['포근한 밤, 하늘고양이에게 오신 걸 환영해요.','Welcome to a cozy night at Sky Cat.','空猫カフェで心地よい夜を！'],
+    greetingSpring:['봄바람과 함께 작은 행복을 만나보세요.','Find a little happiness in the spring breeze.','春風とともに小さな幸せを。'],
+    greetingSummer:['시원한 하늘 아래 잠깐 쉬어 가세요.','Take a moment under a refreshing sky.','涼しい空の下でひと休み。'],
+    greetingAutumn:['따뜻한 커피와 가을빛을 함께 느껴보세요.','Enjoy warm coffee and autumn colors.','温かいコーヒーと秋の色を楽しんで。'],
+    greetingWinter:['차가운 바람은 문 밖에, 포근함은 여기 있어요.','Leave the chill outside and stay cozy here.','冷たい風は外に、ぬくもりはここに。']
+  };
+  const t=k=>translations[k]?.[html.lang==='en'?1:html.lang==='ja'?2:0]||k;
+  const valid=(x,values,fallback)=>values.includes(x)?x:fallback;
+  const read=()=>{try{return JSON.parse(localStorage.getItem(preferencesKey)||'{}')||{};}catch{return {};}};
+  const prefs=read();
+  let timeMode=valid(prefs.time,['auto','day','night'],'auto'),seasonMode=valid(prefs.season,['auto','spring','summer','autumn','winter'],'auto');
+  let volume=Number.isFinite(prefs.volume)?Math.min(100,Math.max(0,prefs.volume)):30;
+  const save=()=>{try{localStorage.setItem(preferencesKey,JSON.stringify({time:timeMode,season:seasonMode,volume}));}catch{}};
+  function kst(now=new Date()){
+    const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Seoul',month:'numeric',hour:'numeric',hourCycle:'h23'}).formatToParts(now);
+    const month=Number(parts.find(x=>x.type==='month').value), hour=Number(parts.find(x=>x.type==='hour').value);
+    return {sky:hour>=6&&hour<18?'day':'night',season:month>=3&&month<=5?'spring':month>=6&&month<=8?'summer':month>=9&&month<=11?'autumn':'winter'};
+  }
+  let sky='',season='',reaction=-1,pictureIndex=0,storyIndex=0,audioError=false;
+  const greeting=()=>({spring:'greetingSpring',summer:'greetingSummer',autumn:'greetingAutumn',winter:'greetingWinter'})[season]||'greetingSpring';
+  function updateLocalized(){
+    for(const n of $$('[data-v14]'))n.textContent=t(n.dataset.v14);
+    for(const n of $$('[data-v14-label]'))n.setAttribute('aria-label',t(n.dataset.v14Label));
+    $('#welcome-title').textContent=t(sky==='night'?'welcomeNight':'welcomeDay');
+    $('#welcome-message').textContent=t(greeting());
+    $('#mood-caption').textContent=t(sky)+' · '+t(season)+' · '+t(greeting());
+    $('#mascot-message').textContent=t(reaction<0?'mascotIdle':'reaction'+reaction);
+    $('#hero-reply').textContent=t(reaction<0?'mascotIdle':'reaction'+reaction);
+    $('#sound-status').textContent=t(audioError?'soundError':musicOn||ambientOn?'soundPlaying':'soundHelp');
+    for(const n of $$('.hero-mascot,.character-main'))n.setAttribute('aria-label',t('mascotInteract'));
+    updateStory(storyIndex);
+  }
+  function particles(){
+    const root=$('#season-particles'), glyph={spring:'✿',summer:'✧',autumn:'❋',winter:'❄'}[season];
+    root.replaceChildren();
+    for(let i=0;i<9;i++){
+      const p=document.createElement('span');p.className='season-particle';p.textContent=glyph;
+      p.style.setProperty('--x',((i*31+9)%100)+'%');p.style.setProperty('--size',(12+i%4*5)+'px');
+      p.style.setProperty('--duration',(13+i%5*2)+'s');p.style.setProperty('--delay',(-i*3)+'s');root.append(p);
+    }
+  }
+  function applyMood(){
+    const actual=kst(),nextSky=timeMode==='auto'?actual.sky:timeMode,nextSeason=seasonMode==='auto'?actual.season:seasonMode;
+    const changeSeason=nextSeason!==season;sky=nextSky;season=nextSeason;html.dataset.sky=sky;html.dataset.season=season;
+    document.querySelector('meta[name="theme-color"]').content=sky==='night'?'#102337':'#eaf7ff';
+    if(changeSeason)particles();
+    if(ambientFilter&&ctx)ambientFilter.frequency.setTargetAtTime(season==='winter'?520:season==='summer'?1400:870,ctx.currentTime,.3);
+    updateLocalized();
+  }
+  // An original soft, slow four-chord arrangement; all sound is generated locally.
+  let ctx=null, master=null, musicGain=null, ambientGain=null, ambientFilter=null, ambientSource=null;
+  let musicOn=false,ambientOn=false,timer=null,nextNote=0,noteIndex=0,starting=false;
+  const chords=[[48,55,60,64,67],[45,52,57,60,64],[41,48,53,57,60],[43,50,55,59,62]];
+  const pattern=[0,2,3,4,3,2,1,3];
+  function tone(note,at,len=.9,level=.14){
+    const osc=ctx.createOscillator(),env=ctx.createGain();osc.type='sine';osc.frequency.value=440*Math.pow(2,(note-69)/12);
+    env.gain.setValueAtTime(.0001,at);env.gain.exponentialRampToValueAtTime(level,at+.04);env.gain.exponentialRampToValueAtTime(.0001,at+len);
+    osc.connect(env);env.connect(musicGain);osc.start(at);osc.stop(at+len+.02);
+    osc.onended=()=>{osc.disconnect();env.disconnect();};
+  }
+  function schedule(){
+    if(!ctx||!musicOn||document.hidden||ctx.state!=='running')return;
+    if(nextNote<ctx.currentTime)nextNote=ctx.currentTime+.06;
+    while(nextNote<ctx.currentTime+.2){
+      const chord=chords[Math.floor(noteIndex/8)%chords.length],pos=noteIndex%8;
+      tone(chord[pattern[pos]],nextNote,.85);
+      if(pos===0)tone(chord[0]-12,nextNote,1.7,.09);
+      nextNote+=.56;noteIndex++;
+    }
+  }
+  const ramp=(node,value)=>{if(node&&ctx)node.gain.setTargetAtTime(value,ctx.currentTime,.08);};
+  function syncAudio(){
+    if(!ctx)return;
+    ramp(master,Math.pow(volume/100,1.1)*.7);ramp(musicGain,musicOn ? .8 : 0);ramp(ambientGain,ambientOn ? .32 : 0);
+    if(musicOn&&!document.hidden){if(timer===null){nextNote=ctx.currentTime+.06;timer=setInterval(schedule,100);schedule();}}
+    else if(timer!==null){clearInterval(timer);timer=null;}
+    if(ambientOn&&!ambientSource){
+      const size=ctx.sampleRate*4,buffer=ctx.createBuffer(1,size,ctx.sampleRate),data=buffer.getChannelData(0);
+      let last=0;
+      for(let i=0;i<size;i++){last=(last+.025*(Math.random()*2-1))*.97;data[i]=last*3;}
+      ambientSource=ctx.createBufferSource();ambientSource.buffer=buffer;ambientSource.loop=true;ambientSource.connect(ambientFilter);ambientSource.start();
+    } else if(!ambientOn&&ambientSource){ambientSource.stop();ambientSource.disconnect();ambientSource=null;}
+  }
+  async function ensureAudio(){
+    if(!ctx){
+      const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)throw new Error('No audio context');
+      ctx=new Audio();master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+      musicGain=ctx.createGain();musicGain.gain.value=0;musicGain.connect(master);
+      ambientGain=ctx.createGain();ambientGain.gain.value=0;ambientGain.connect(master);
+      ambientFilter=ctx.createBiquadFilter();ambientFilter.type='lowpass';ambientFilter.frequency.value=season==='summer'?1400:season==='winter'?520:870;ambientFilter.Q.value=.3;ambientFilter.connect(ambientGain);
+    }
+    if(ctx.state==='suspended')await ctx.resume();
+  }
+  function audioButtons(){
+    $('#sky-music').setAttribute('aria-pressed',String(musicOn));$('#sky-ambient').setAttribute('aria-pressed',String(ambientOn));
+    updateLocalized();
+  }
+  async function toggleSound(kind){
+    if(starting)return;starting=true;
+    try{await ensureAudio();audioError=false;if(kind==='music')musicOn=!musicOn;else ambientOn=!ambientOn;syncAudio();}
+    catch{audioError=true;musicOn=false;ambientOn=false;syncAudio();}
+    finally{starting=false;audioButtons();}
+  }
+  function visibility(){
+    if(!ctx)return;
+    if(document.hidden){if(timer!==null){clearInterval(timer);timer=null;}ctx.suspend().catch(()=>{});}
+    else if(musicOn||ambientOn)ctx.resume().then(syncAudio).catch(()=>{});
+  }
+  const stories=$$('.stories .story');
+  function updateStory(index){
+    if(!stories.length)return;
+    index=Math.min(stories.length-1,Math.max(0,index));storyIndex=index;
+    stories.forEach((s,i)=>s.classList.toggle('is-current',i===index));
+  }
+  let storyFrame=0;
+  function trackStory(){storyFrame=0;const line=innerHeight*.55;let current=0;for(let i=0;i<stories.length;i++)if(stories[i].getBoundingClientRect().top<line)current=i;if(current!==storyIndex)updateStory(current);}
+  function queueStory(){if(!storyFrame)storyFrame=requestAnimationFrame(trackStory);}
+  function initStory(){
+    stories.forEach((s,i)=>{s.id='story-'+(i+1);});
+    window.addEventListener('scroll',queueStory,{passive:true});window.addEventListener('resize',queueStory,{passive:true});queueStory();
+  }
+  function initMascot(){
+    const main=$('.character-main'),variants=$$('.character-variants img'),hero=$('.hero-mascot');
+    const original=main.src;
+    function react(index,origin){
+      reaction=index;pictureIndex=(index+1)%3;
+      main.src=variants[index]?.src||original;
+      for(const n of $$('[data-reaction]')){const active=Number(n.dataset.reaction)===index;n.classList.toggle('is-active',active);n.setAttribute('aria-pressed',String(active));}
+      const targets=[main];if(origin===hero){targets.push(hero);$('#hero-reply').hidden=false;}
+      targets.forEach(n=>{n.classList.remove('is-reaction');void n.offsetWidth;n.classList.add('is-reaction');});
+      updateLocalized();
+    }
+    for(const n of [hero,main]){
+      n.tabIndex=0;n.setAttribute('role','button');n.addEventListener('click',()=>react(pictureIndex,n));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();react(pictureIndex,n);}});
+      n.addEventListener('animationend',()=>n.classList.remove('is-reaction'));
+    }
+    for(const b of $$('[data-reaction]')){b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>react(Number(b.dataset.reaction),main));}
+    const logo=$('.header .brand img').cloneNode();logo.removeAttribute('data-alt');logo.alt='Sky Cat Cafe';$('#brand-logo-display').append(logo);
+  }
+  function initWelcome(){
+    let welcomed=false;try{welcomed=sessionStorage.getItem(welcomeKey)==='1';}catch{}
+    if(!welcomed){$('#welcome-note').hidden=false;try{sessionStorage.setItem(welcomeKey,'1');}catch{}}
+    $('#welcome-close').addEventListener('click',()=>{$('#welcome-note').hidden=true;});
+  }
+  function initTransition(){
+    const link=$('[data-official="home"]'),overlay=$('#page-transition');
+    let navigating=false,timeout=null;
+    link.addEventListener('click',e=>{
+      if(e.defaultPrevented||motion.matches||html.dataset.motion==='off'||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||link.target==='_blank')return;
+      e.preventDefault();if(navigating)return;navigating=true;
+      overlay.hidden=false;void overlay.offsetWidth;overlay.classList.add('is-active');
+      if(master)ramp(master,0);
+      timeout=setTimeout(()=>location.assign(link.href),360);
+    });
+    window.addEventListener('pageshow',()=>{if(timeout!==null)clearTimeout(timeout);navigating=false;overlay.classList.remove('is-active');overlay.hidden=true;visibility();});
+    window.addEventListener('pagehide',()=>{if(timer!==null){clearInterval(timer);timer=null;}if(ctx)ctx.suspend().catch(()=>{});});
+  }
+  function init(){
+    $('#sky-time').value=timeMode;$('#sky-season').value=seasonMode;$('#sky-volume').value=String(volume);
+    $('#sky-time').addEventListener('change',e=>{timeMode=valid(e.target.value,['auto','day','night'],'auto');save();applyMood();});
+    $('#sky-season').addEventListener('change',e=>{seasonMode=valid(e.target.value,['auto','spring','summer','autumn','winter'],'auto');save();applyMood();});
+    $('#sky-volume').addEventListener('input',e=>{volume=Math.min(100,Math.max(0,Number(e.target.value)||0));save();syncAudio();});
+    $('#sky-music').addEventListener('click',()=>toggleSound('music'));$('#sky-ambient').addEventListener('click',()=>toggleSound('ambient'));
+    document.addEventListener('visibilitychange',visibility);
+    initStory();initMascot();initWelcome();initTransition();applyMood();
+    new MutationObserver(updateLocalized).observe(html,{attributes:true,attributeFilter:['lang']});
+    setInterval(()=>{if(timeMode==='auto'||seasonMode==='auto')applyMood();},60000);
+  }
+  try{init();}catch(error){console.error('[SkyCat V14]',error);}
+})();
+
+/* V17 — seasonal picks, secret gifts, daily letters, sky response and motion preferences. */
+(() => {
+  'use strict';
+  const html=document.documentElement, $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const systemMotion=matchMedia('(prefers-reduced-motion: reduce)');
+  const motionKey='skycat:landing:v17:motion', secretKey='skycat:landing:v17:secrets';
+  const strings={
+    motionTitle:['화면 애니메이션','Screen animation','画面のアニメーション'],
+    motionHelp:['구름, 캐릭터, 스크롤 효과와 사진 자동 전환을 조절합니다.','Control clouds, mascot effects, scrolling and automatic slides.','雲、キャラクター、スクロール効果と写真の自動切替を調整します。'],
+    motionOn:['애니메이션 켜짐','Animation on','アニメーション ON'],motionOff:['애니메이션 꺼짐','Animation off','アニメーション OFF'],motionSystem:['시스템 설정에 따라 꺼짐','Off by system preference','端末の設定により OFF'],
+    seasonFeature:['계절별 시그니처 추천','Seasonal signature pick','季節のおすすめ'],seasonHint:['위에서 선택한 계절에 따라 추천 메뉴가 바뀝니다.','The recommendation follows your selected season.','選択した季節に合わせておすすめが変わります。'],
+    spring:['봄','SPRING','春'],summer:['여름','SUMMER','夏'],autumn:['가을','AUTUMN','秋'],winter:['겨울','WINTER','冬'],
+    pickSpring:['꽃이 피는 계절과 잘 어울리는 달콤한 디저트.','A sweet dessert for the season of blossoms.','花咲く季節にぴったりの甘いデザート。'],
+    pickSummer:['맑은 하늘을 닮은 시원한 한 잔으로 더위를 식혀 보세요.','Cool down with a refreshing drink in the colors of the sky.','空色の爽やかな一杯で涼みましょう。'],
+    pickAutumn:['고소하고 바삭한 크루아상과 함께 느긋한 가을을 즐겨요.','Enjoy a slow autumn moment with a buttery croissant.','香ばしいクロワッサンとゆったりした秋を。'],
+    pickWinter:['하늘고양이를 닮은 포근한 라떼로 마음을 녹여요.','Warm your heart with our cozy Sky Cat latte.','スカイキャットのラテで心まで温かく。'],
+    dailyTitle:['오늘 고양이가 건네는 편지','A letter from your Sky Cat','今日のスカイキャット便り'],
+    secretSky:['빛나는 하늘의 비밀','Secret of the shining sky','輝く空の秘密'],secretCat:['고양이 편지의 비밀','Secret in the cat letter','猫の手紙の秘密'],secretGallery:['카페 공간의 비밀','Secret in the cafe gallery','カフェ空間の秘密'],
+    secretHint:['작은 반짝임에 숨겨진 선물을 찾아보세요.','Find the gifts hidden in tiny sparkles.','小さな輝きに隠れた贈り物を探しましょう。'],
+    secretComplete:['축하해요! 하늘고양이의 비밀 선물 3개를 모두 찾았어요.','Congratulations! You found all three secret gifts.','おめでとう！秘密の贈り物を3つすべて見つけました。'],
+    gift0:['☁ 구름 조각 발견! 걱정은 하늘에 맡겨요.','☁ A piece of cloud! Leave your worries in the sky.','☁ 雲のかけら発見！心配は空に預けましょう。'],
+    gift1:['♡ 고양이의 마음 발견! 오늘도 잘하고 있어요.','♡ A cat’s heart! You are doing wonderfully today.','♡ 猫のハート発見！今日もよく頑張っています。'],
+    gift2:['✦ 별빛 조각 발견! 당신의 하루가 반짝이길.','✦ A piece of starlight! May your day sparkle.','✦ 星のかけら発見！あなたの一日が輝きますように。']
+  };
+  const letters=[
+    ['오늘은 잠시 숨을 고르고, 나만의 속도로 걸어가요.','Take a breath and walk at your own pace today.','ひと息ついて、自分のペースで歩きましょう。'],
+    ['작은 행복 하나면 오늘은 충분히 반짝여요.','One little joy can brighten an entire day.','小さな幸せひとつで一日は輝きます。'],
+    ['따뜻한 커피처럼 마음도 천천히 데워 보세요.','Let your heart warm slowly, like a cup of coffee.','温かいコーヒーのように心もゆっくり温めて。'],
+    ['쉬어 가는 시간도 당신의 소중한 하루예요.','Rest is a precious part of your day, too.','休む時間もあなたの大切な一日です。'],
+    ['구름 위의 고양이가 당신을 응원하고 있어요.','A cat on a cloud is cheering for you.','雲の上の猫があなたを応援しています。'],
+    ['오늘의 작은 성공을 스스로에게 칭찬해 주세요.','Celebrate your small wins today.','今日の小さな成功を自分で褒めてあげましょう。'],
+    ['하늘이 흐려도 구름 뒤에는 빛이 기다려요.','Even on cloudy days, light waits behind the clouds.','曇りの日も雲の向こうに光が待っています。'],
+    ['당신만의 느린 순간을 마음껏 즐겨도 괜찮아요.','It is okay to enjoy a moment that is yours alone.','自分だけのゆっくりした時間を楽しんでいいのです。'],
+    ['달콤한 한 입처럼 오늘에도 다정함을 더해요.','Add a little kindness to today, like a sweet bite.','甘いひと口のように今日にも優しさを。'],
+    ['새로운 내일보다 지금의 작은 여유에 집중해요.','Focus on the little peace you have right now.','明日より今の小さな安らぎに目を向けて。'],
+    ['반짝이는 별 하나에도 소원을 담을 수 있어요.','Even one little star can hold a wish.','小さな星ひとつにも願いを込められます。'],
+    ['오늘도 포근한 마음으로 당신을 환영해요.','You are always welcome here, with a warm heart.','今日も温かな心であなたをお迎えします。'],
+    ['나에게 다정한 말 한마디를 선물해 봐요.','Give yourself the gift of one kind word.','自分に優しい言葉をひとつ贈ってみましょう。'],
+    ['한 걸음씩, 하늘고양이와 함께 쉬어가요.','One step at a time, take a break with Sky Cat.','一歩ずつ、スカイキャットとひと休み。']
+  ];
+  const language=()=>html.lang==='en'?1:html.lang==='ja'?2:0;
+  const t=k=>strings[k]?.[language()]||k;
+  const put=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value;};
+  const read=(key,fallback)=>{try{return localStorage.getItem(key)??fallback;}catch{return fallback;}};
+  const save=(key,value)=>{try{localStorage.setItem(key,value);}catch{}};
+  const reduced=()=>systemMotion.matches||html.dataset.motion==='off';
+  const picks={spring:[4,'pickSpring'],summer:[3,'pickSummer'],autumn:[5,'pickAutumn'],winter:[1,'pickWinter']};
+  let secretFound=new Set(),revealed=new Set(),lastGift=-1,frame=null,dx=0,dy=0;
+  try{const saved=JSON.parse(read(secretKey,'[]'));if(Array.isArray(saved))secretFound=new Set(saved.filter(n=>Number.isInteger(n)&&n>=0&&n<3));}catch{}
+  function renderSeason(){
+    const season=Object.hasOwn(picks,html.dataset.season)?html.dataset.season:'spring';
+    const [id,copy]=picks[season],source=$(`.menu-card h3[data-i18n="m${id}"]`),card=source?.closest('.menu-card'),image=card?.querySelector('img');
+    if(!source||!image)return;
+    const target=$('#season-special-img'),src=image.getAttribute('src');if(target.getAttribute('src')!==src)target.setAttribute('src',src);
+    target.alt=source.textContent;put($('#season-special-title'),source.textContent);put($('#season-special-badge'),t(season));put($('#season-special-desc'),t(copy));$('#season-special').hidden=false;
+  }
+  function letterIndex(now=new Date()){
+    const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(now);
+    const v=k=>Number(parts.find(p=>p.type===k).value);
+    return Math.floor(Date.UTC(v('year'),v('month')-1,v('day'))/86400000)%letters.length;
+  }
+  function renderDaily(now=new Date()){
+    const locale=['ko-KR','en-US','ja-JP'][language()];put($('#daily-date'),new Intl.DateTimeFormat(locale,{timeZone:'Asia/Seoul',month:'long',day:'numeric'}).format(now));
+    put($('#daily-message'),letters[letterIndex(now)][language()]);
+  }
+  function renderSecrets(){
+    for(const button of $$('[data-secret]')){const value=Number(button.dataset.secret),found=secretFound.has(value);button.setAttribute('aria-pressed',String(found));button.classList.toggle('is-found',found);const result=$(`[data-secret-result="${value}"]`);result.hidden=!revealed.has(value);put(result,t('gift'+value)+(secretFound.size===3&&lastGift===value?' '+t('secretComplete'):''));}
+    put($('#secret-count'),secretFound.size+' / 3');$('#secret-complete').hidden=secretFound.size!==3;
+  }
+  function discover(value){
+    if(!Number.isInteger(value)||value<0||value>2)return;
+    const isNew=!secretFound.has(value);revealed.add(value);secretFound.add(value);lastGift=value;save(secretKey,JSON.stringify([...secretFound]));renderSecrets();
+    if(isNew&&!reduced()){
+      const mascot=$(value===0?'.hero-mascot':'.character-main');if(mascot){mascot.classList.remove('is-secret-celebration');void mascot.offsetWidth;mascot.classList.add('is-secret-celebration');}
+    }
+  }
+  function renderMotion(){const b=$('#sky-motion');b.setAttribute('aria-pressed',String(!reduced()));b.disabled=systemMotion.matches;put(b,t(systemMotion.matches?'motionSystem':reduced()?'motionOff':'motionOn'));}
+  function resetSky(){dx=0;dy=0;$('#home').style.setProperty('--sky-x','0px');$('#home').style.setProperty('--sky-y','0px');if(frame!==null){cancelAnimationFrame(frame);frame=null;}}
+  function moveSky(e){
+    if(reduced()||e.pointerType!=='mouse')return;
+    const rect=$('#home').getBoundingClientRect();if(!rect.width||!rect.height)return;
+    dx=Math.max(-1,Math.min(1,((e.clientX-rect.left)/rect.width-.5)*2))*22;dy=Math.max(-1,Math.min(1,((e.clientY-rect.top)/rect.height-.5)*2))*15;
+    if(frame===null)frame=requestAnimationFrame(()=>{frame=null;if(reduced())return;$('#home').style.setProperty('--sky-x',dx.toFixed(1)+'px');$('#home').style.setProperty('--sky-y',dy.toFixed(1)+'px');});
+  }
+  function applyMotion(){renderMotion();if(reduced())resetSky();window.dispatchEvent(new Event('skycat:motion-change'));}
+  function renderAll(){
+    for(const node of $$('[data-v17]'))put(node,t(node.dataset.v17));for(const node of $$('[data-v17-label]'))node.setAttribute('aria-label',t(node.dataset.v17Label));
+    renderSeason();renderDaily();renderSecrets();renderMotion();
+  }
+  function init(){
+    html.dataset.motion=read(motionKey,'on')==='off'?'off':'on';
+    $('#sky-motion').addEventListener('click',()=>{if(systemMotion.matches)return;html.dataset.motion=html.dataset.motion==='off'?'on':'off';save(motionKey,html.dataset.motion);applyMotion();});
+    systemMotion.addEventListener('change',applyMotion);
+    $('#home').addEventListener('pointermove',moveSky);$('#home').addEventListener('pointerleave',resetSky);
+    for(const button of $$('[data-secret]'))button.addEventListener('click',()=>discover(Number(button.dataset.secret)));
+    for(const mascot of $$('.hero-mascot,.character-main'))mascot.addEventListener('animationend',()=>mascot.classList.remove('is-secret-celebration'));
+    new MutationObserver(renderAll).observe(html,{attributes:true,attributeFilter:['lang','data-season']});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)resetSky();else renderDaily();});
+    setInterval(renderDaily,60000);renderAll();applyMotion();
+  }
+  try{init();}catch(error){console.error('[SkyCat V17]',error);}
 })();

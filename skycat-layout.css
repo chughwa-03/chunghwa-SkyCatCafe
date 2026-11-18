@@ -1,0 +1,186 @@
+/* V24.2 — Common outer geometry, matching the V24.1 goods shop.
+   Full-width backgrounds, dialogs, images and each section's internal
+   layout remain independent. No viewport zoom or fixed aspect ratio. */
+:root {
+  --skycat-content-max: 1370px;
+  --skycat-content-percent: 94%;
+  --skycat-header-height: 72px;
+}
+
+@media (max-width: 710px) {
+  :root {
+    --skycat-content-percent: 91%;
+    --skycat-header-height: 69px;
+  }
+}
+
+/* One common width and horizontal centerline across all four pages. */
+.shell,
+.wrap,
+#workspace {
+  width: min(var(--skycat-content-max), var(--skycat-content-percent));
+  margin-inline: auto;
+  min-width: 0;
+}
+
+/* Landing header follows the goods shop's height; retain its own menu. */
+:root { --header-height: var(--skycat-header-height); }
+.shell.final-inner { max-width: none; }
+.final-inner > p { max-width: 810px; margin-inline: auto; }
+
+/* The wider landing rail also extends the viewport range in which the
+   V23 footer safety gap is needed for the fixed back-to-top button. */
+@media (min-width: 961px) and (max-width: 1620px) {
+  .footer-inner { padding-right: 64px; }
+}
+
+/* The official homepage's standalone language control and customer hub
+   align with the same rail rather than a second maximum content width. */
+#sc-home-language {
+  width: min(var(--skycat-content-max), var(--skycat-content-percent));
+  max-width: none;
+  padding-inline: 0;
+}
+.sx-dashboard .wrap { max-width: none; }
+
+/* The admin rail includes both the sidebar and the dashboard. Retain
+   the sidebar's responsive layout and the tables' own scroll region. */
+#workspace > #main {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  padding-inline: clamp(16px, 2vw, 28px);
+}
+#workspace .table-scroll { max-width: 100%; min-width: 0; }
+#workspace .metric { overflow-wrap: anywhere; }
+
+@media (max-width: 740px) {
+  #workspace > #main { padding-inline: 0; }
+}
+
+/* Keep sign-in readable and centered; its form is intentionally a card. */
+.login-wrap { padding-inline: calc((100% - var(--skycat-content-percent)) / 2); }
+
+/* V24.3 — Storefront scale: not just the outer width. Both storefront pages
+   use the same text scale, viewport gutter and visual-size tokens. */
+html.skycat-storefront {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-gutter: stable;
+  overflow-x: clip;
+  --storefront-hero-title: clamp(25px, 3.1vw, 46px);
+  --storefront-hero-button: clamp(11px, 1.05vw, 15px);
+  --storefront-hero-description: 17px;
+  --storefront-section-title: 30px;
+  --storefront-card-title: 17px;
+  --storefront-card-gap: 17px;
+}
+
+.skycat-storefront body { min-width: 0; max-width: 100%; }
+.skycat-storefront .hero .hero-in {
+  display: grid;
+  grid-template-columns: minmax(0, 36fr) minmax(0, 21fr) minmax(0, 43fr);
+  height: auto;
+  min-height: 330px;
+  gap: 0;
+  padding-block: 0;
+  align-items: center;
+}
+.skycat-storefront .hero .hero-intro { min-width: 0; }
+.skycat-storefront .hero .hero-intro h1 {
+  font-size: var(--storefront-hero-title);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.skycat-storefront .hero .hero-desc {
+  font-size: var(--storefront-hero-description);
+  line-height: 1.5;
+}
+.skycat-storefront .hero .hero-buttons { gap: 8px; flex-wrap: wrap; }
+.skycat-storefront .hero .hero-buttons .pill {
+  font-size: var(--storefront-hero-button);
+  padding-inline: 12px;
+  min-height: 46px;
+}
+.skycat-storefront .hero .hero-mascot { min-width: 0; height: 330px; width: 100%; }
+.skycat-storefront .hero .hero-mascot img {
+  width: min(100%, 285px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.skycat-storefront .hero .hero-store { height: 292px; min-width: 0; margin: 0 8px 0 0; }
+.skycat-storefront #home .store-shape { inset: 12px 4px 12px 8px; border-width: 4px; border-radius: 34px; }
+.skycat-storefront .hero .welcome-bubble { font-size: 13px; max-width: 86%; }
+
+/* The old three-column homepage squeezed its menu cards into just one
+   column. Give the featured menu a full-width row with goods-sized cards. */
+.skycat-storefront .intro-section { padding: 36px 0 48px; }
+.skycat-storefront .intro-grid {
+  grid-template-columns: minmax(0, 42fr) minmax(0, 58fr) !important;
+  grid-template-rows: auto;
+  gap: 24px;
+}
+.skycat-storefront .intro-grid > * { min-width: 0; }
+.skycat-storefront .intro-grid .goods-teaser,
+.skycat-storefront .intro-grid .menu-area {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  width: 100%;
+  margin: 0;
+}
+.skycat-storefront .goods-teaser-images { width: min(100%, 420px); justify-self: end; }
+.skycat-storefront .intro-grid .menu-area { border-left: 0; border-top: 1px solid #cfe8f6; padding: 22px 0 0; }
+.skycat-storefront .menu-area h2,
+.skycat-storefront .about-copy h2,
+.skycat-storefront .collection-heading h2 {
+  font-size: var(--storefront-section-title);
+  line-height: 1.22;
+}
+.skycat-storefront .menu-area .menu-grid {
+  grid-template-columns: repeat(3, minmax(0, calc((100% - 51px) / 4)));
+  justify-content: center;
+  gap: var(--storefront-card-gap);
+  align-items: stretch;
+}
+.skycat-storefront .menu-area .menu-card { display: flex; flex-direction: column; padding: 6px 6px 12px; border-radius: 21px; }
+.skycat-storefront .menu-area .menu-card .food { width: 100%; height: auto; aspect-ratio: 1; }
+.skycat-storefront .menu-area .menu-card h3 { font-size: var(--storefront-card-title); overflow-wrap: anywhere; }
+.skycat-storefront .menu-area .menu-card details { margin-top: auto; }
+.skycat-storefront .menu-area .menu-card strong { margin-bottom: 8px; }
+
+@media (max-width: 710px) {
+  html.skycat-storefront {
+    --storefront-hero-title: 32px;
+    --storefront-hero-description: 16px;
+    --storefront-section-title: 25px;
+    --storefront-card-title: 14px;
+    --storefront-card-gap: 11px;
+  }
+  .skycat-storefront .hero .hero-in {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    height: auto;
+    padding: 25px 0 20px;
+  }
+  .skycat-storefront .hero .hero-intro { width: 100%; text-align: center; padding-inline: 0; }
+  .skycat-storefront .hero .hero-buttons { justify-content: center; }
+  .skycat-storefront .hero .hero-store { height: 130px; width: 100%; max-width: 440px; margin: 8px auto 0; }
+  /* Keep the cafe's interactive mascot available, beside its photo instead
+     of a separate tall mobile panel; the goods shop retains its existing strip. */
+  .skycat-storefront #home .hero-in { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .skycat-storefront #home .hero-intro { grid-column: 1 / -1; }
+  .skycat-storefront #home .hero-mascot { height: 130px; }
+  .skycat-storefront #home .hero-mascot img { width: min(100%, 130px); bottom: 0; }
+  .skycat-storefront #home .hero-store { grid-column: auto; }
+  .skycat-storefront #home .store-shape { inset: 0; border-radius: 18px; }
+  .skycat-storefront #home .welcome-bubble { font-size: 11px; top: 4px; right: 5px; padding: 5px 8px; }
+  .skycat-storefront .intro-section { padding: 25px 0 35px; }
+  .skycat-storefront .intro-grid { gap: 24px; }
+  .skycat-storefront .goods-teaser-images { justify-self: start; }
+  .skycat-storefront .menu-area .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

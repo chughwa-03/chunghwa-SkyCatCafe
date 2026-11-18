@@ -728,6 +728,20 @@
         line-height: 1.5;
       }
 
+      /* V23: 공식 홈페이지 하단 이동 링크와 고정 TOP 버튼의 겹침 방지.
+         굿즈샵은 별도의 두 버튼 영역에 맞춘 여백을 적용한다. */
+      @media (min-width: 711px) and (max-width: 1620px) {
+        body:not(.goods-page) .footer-in {
+          padding-right: 112px;
+        }
+      }
+      @media (max-width: 710px) {
+        body:not(.goods-page) .footer-in {
+          padding-right: 0;
+          padding-bottom: 48px;
+        }
+      }
+
       @media (max-width: 1250px) {
         nav.pc {
           gap: 2px;
@@ -1071,16 +1085,6 @@
         --order-navy: #0e325e;
         --order-blue: #188cd0;
         --order-sky: #d6efff;
-      }
-
-      .order-entry {
-        display: flex;
-        justify-content: center;
-        padding: 16px 0 7px;
-      }
-
-      .order-entry a {
-        box-shadow: 0 7px 18px #2484bc20;
       }
 
       .order-section {
@@ -4661,43 +4665,6 @@
         font-weight: 700;
       }
 
-      .menu-showcase {
-        max-width: 900px;
-        margin: 22px auto 30px;
-        background: #fff;
-        border: 2px solid #c6e8f9;
-        border-radius: 25px;
-        padding: 18px;
-        box-shadow: 0 9px 28px #2e89b72b;
-      }
-
-      .menu-showcase h3 {
-        font-size: 21px;
-        text-align: center;
-        margin: 4px 0 12px;
-        color: #0d477b;
-      }
-
-      .menu-showcase img {
-        width: min(100%, 620px);
-        height: auto;
-        margin: auto;
-        object-fit: contain;
-      }
-
-      .menu-showcase .showcase-help {
-        font-size: 13px;
-        color: #426988;
-        text-align: center;
-        margin: 12px 0;
-      }
-
-      .menu-showcase .order-action {
-        display: flex;
-        max-width: 300px;
-        margin: 12px auto;
-      }
-
       .menu-alt-art {
         margin: 12px auto;
         max-width: 720px;
@@ -4952,10 +4919,6 @@
       }
 
       @media (max-width: 710px) {
-        .menu-showcase {
-          padding: 10px;
-          margin-top: 12px;
-        }
         .category-switch {
           gap: 5px;
         }
@@ -5034,129 +4997,6 @@
       .demo-complete .order-muted-button {
         display: inline-flex;
         margin: 9px 4px;
-      }
-
-      /* ===== 전체 메뉴 버튼: 페이지 스크롤 대신 메뉴판 이미지 팝업 ===== */
-      .menu-showcase {
-        display: none !important;
-      }
-
-      .menu-showcase:target {
-        display: flex !important;
-        position: fixed;
-        inset: 0;
-        margin: 0;
-        width: 100vw;
-        max-width: none;
-        height: 100vh;
-        height: 100dvh;
-        padding: 16px;
-        border: 0;
-        border-radius: 0;
-        background: #062944c9;
-        z-index: 650;
-        overflow-y: auto;
-        align-items: flex-start;
-        justify-content: center;
-      }
-
-      .poster-backdrop {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        cursor: zoom-out;
-      }
-
-      .poster-window {
-        position: relative;
-        z-index: 1;
-        flex: 0 1 850px;
-        min-width: 0;
-        margin: auto;
-        padding: 18px 18px 22px;
-        border: 4px solid #fff;
-        border-radius: 25px;
-        background: linear-gradient(#e8f8ff, #fff);
-        box-shadow: 0 18px 60px #001d4180;
-        text-align: center;
-      }
-
-      .menu-showcase .poster-window h3 {
-        margin: 6px 38px 5px;
-        color: #0a4979;
-        font-size: clamp(19px, 2vw, 25px);
-      }
-
-      .menu-showcase .poster-window .showcase-help {
-        margin: 5px 0 14px;
-        color: #426988;
-        font-size: 13px;
-      }
-
-      .menu-showcase .poster-window img {
-        width: min(100%, 700px);
-        height: auto;
-        max-height: none;
-        object-fit: contain;
-        margin: 0 auto;
-      }
-
-      .menu-showcase .poster-window .order-action {
-        display: flex;
-        max-width: 360px;
-        margin: 16px auto 4px;
-      }
-
-      .poster-close {
-        position: absolute;
-        right: 10px;
-        top: 8px;
-        display: grid;
-        place-items: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        font-size: 29px;
-        font-weight: 900;
-        background: #fff;
-        color: #0a4979;
-        border: 2px solid #76bde5;
-        z-index: 2;
-      }
-
-      .poster-close:hover {
-        background: #e4f7ff;
-      }
-
-      body:has(#menu-board-image:target) {
-        overflow: hidden;
-      }
-
-      @media (max-width: 710px) {
-        .menu-showcase:target {
-          padding: 8px;
-        }
-        .poster-window {
-          padding: 14px 8px;
-          border-radius: 18px;
-        }
-        .menu-showcase .poster-window h3 {
-          font-size: 17px;
-        }
-        .menu-showcase .poster-window .showcase-help {
-          font-size: 12px;
-          margin: 8px 0;
-        }
-        .menu-showcase .poster-window img {
-          width: 100%;
-        }
-        .poster-close {
-          width: 34px;
-          height: 34px;
-          right: 4px;
-          top: 4px;
-          font-size: 24px;
-        }
       }
 
       /* === 교체된 메뉴판 PNG와 직접 클릭 가능한 체크박스 === */
@@ -5590,45 +5430,6 @@
         }
         .photo-dialog .caption-paw {
           font-size: 15px;
-        }
-      }
-
-      /* 전체 메뉴 팝업: 원형 버튼의 X를 글꼴의 기준선이 아닌 원 중심에 정확히 정렬 */
-      .poster-close {
-        position: absolute;
-        display: grid;
-        place-items: center;
-        font-size: 0;
-        /* 기존 문자 ×의 글꼴 여백으로 인한 오프셋 제거 */
-        line-height: 0;
-      }
-
-      .poster-close::before,
-      .poster-close::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 18px;
-        height: 3px;
-        border-radius: 2px;
-        background: currentColor;
-        transform-origin: center;
-      }
-
-      .poster-close::before {
-        transform: translate(-50%, -50%) rotate(45deg);
-      }
-
-      .poster-close::after {
-        transform: translate(-50%, -50%) rotate(-45deg);
-      }
-
-      @media (max-width: 710px) {
-        .poster-close::before,
-        .poster-close::after {
-          width: 16px;
-          height: 2.5px;
         }
       }
 
@@ -6514,10 +6315,6 @@ html[lang=ja] .zoom-photo::after{content:"⤢ 写真を拡大"}
 
 /* v5: locale artwork uses the same normalized checkbox coordinates.
    Horizontal overflow is isolated to the poster, never the page. */
-.sc-enhanced #menu-board-image .poster-window{flex-basis:1240px;max-width:100%;box-sizing:border-box}
-.sc-poster-preview{overflow-x:auto;overscroll-behavior-inline:contain;width:100%;max-width:100%;padding-bottom:5px}
-.sc-enhanced #menu-board-image .sc-poster-preview img{display:block;width:100%;min-width:1030px;max-width:none;height:auto;margin:0}
-.sc-poster-preview:focus-visible{outline:2px solid var(--sc-blue);outline-offset:2px}
 .sc-enhanced #full-menu .graphic-selection{max-width:100%;overflow-x:auto}
 .sc-enhanced #full-menu .order-board{max-width:1450px}
 .sc-enhanced #full-menu .graphic-image-shell{min-width:1030px}
@@ -6535,7 +6332,6 @@ html:is([lang=en],[lang=ja]).sc-enhanced #full-menu .graphic-image-shell{min-wid
 .sc-enhanced #full-menu .graphic-image-shell:has(.graphic-menu-image:is([data-sc-menu-layout="en"],[data-sc-menu-layout="ja"])) .graphic-overlay-row :is(.order-check,.order-check-mark){width:30%}
 .sc-enhanced #full-menu .graphic-image-shell:has(.graphic-menu-image:is([data-sc-menu-layout="en"],[data-sc-menu-layout="ja"])) .graphic-overlay-row .order-quantity-label{left:35%;width:65%}
 .sc-enhanced #full-menu .graphic-image-shell:has(.graphic-menu-image:is([data-sc-menu-layout="en"],[data-sc-menu-layout="ja"])) .graphic-overlay-row .order-quantity{font-size:clamp(10px,1vw,12px)}
-html:is([lang=en],[lang=ja]).sc-enhanced #menu-board-image .sc-poster-preview img{min-width:1030px}
 .sc-enhanced #full-menu .sc-toolbar,.sc-enhanced #full-menu .sc-lang,.sc-enhanced #full-menu .sc-status,.sc-enhanced #full-menu .sc-list{max-width:100%;min-width:0;box-sizing:border-box}
 .sc-list-item>div,.sc-list-item>details,.sc-recommend-info{min-width:0;max-width:100%}
 .sc-list-item img,.sc-recommend-content img{display:block;flex-shrink:0;object-fit:contain;background:#f0f8ff}
@@ -6544,7 +6340,7 @@ html:is([lang=en],[lang=ja]).sc-enhanced #menu-board-image .sc-poster-preview im
 
 /* v5: longer translations participate in document flow instead of pushing
    past the column divider or colliding with absolute-positioned pictures. */
-html:is([lang=en],[lang=ja]) :is(.hero-intro,.about-copy,.menu-area,.gallery-intro,.visit-card,.footer-text,.feature>div,.menu-card,.sc-recommend-info,.order-payment-box,.order-payment-head,.order-cart-name,.selection-checkout-bar,.poster-window){
+html:is([lang=en],[lang=ja]) :is(.hero-intro,.about-copy,.menu-area,.gallery-intro,.visit-card,.footer-text,.feature>div,.menu-card,.sc-recommend-info,.order-payment-box,.order-payment-head,.order-cart-name,.selection-checkout-bar){
   min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal;box-sizing:border-box
 }
 html:is([lang=en],[lang=ja]) .hero-in{height:auto;min-height:350px;grid-template-columns:minmax(0,1.23fr) minmax(0,.68fr) minmax(0,1fr);gap:14px;padding:18px 0;align-items:center}
@@ -6609,7 +6405,6 @@ html:is([lang=en],[lang=ja]) #full-menu .poster-filter{white-space:normal;max-wi
   html:is([lang=en],[lang=ja]) .menu-area{width:100%;padding:21px 0 0}
   html:is([lang=en],[lang=ja]) .gallery-grid{grid-template-columns:1fr}
   html:is([lang=en],[lang=ja]) .order-payment-head{padding-inline:8px}
-  .sc-enhanced #menu-board-image .poster-window{padding:12px}
 }
 
 /* Customer service, v4 — white cards, sky-blue accents and fluid layout. */
@@ -6935,3 +6730,121 @@ html:is([lang=en],[lang=ja]) #full-menu .poster-filter{white-space:normal;max-wi
 }
 @media(max-width:360px){.sc-service-nav a{font-size:.73rem;gap:4px}.sc-service-nav a svg{width:18px;height:18px}.sc-service-mug{width:63px}}
 @media(prefers-reduced-motion:reduce){.sc-services .sc-btn-primary:hover,.sc-service-nav a:hover,.sc-service-nav a:focus-visible{transform:none}}
+
+/* V7: integrated customer journeys, matching the original Sky Cat palette */
+.sx-dashboard{padding:clamp(48px,7vw,96px) 0;background:linear-gradient(150deg,#f2faff,#e6f5ff 58%,#fcf9f3);color:#173b5b}
+.sx-dashboard .wrap{max-width:1180px}
+.sx-dashboard h2{margin:8px 0 12px;color:#092a53;font-size:clamp(1.8rem,3vw,2.8rem);letter-spacing:-.045em}
+.sx-intro{margin:0 0 14px;color:#42657f}
+.sx-demo{display:inline-block;background:#fef9ea;border:1px solid #e9d2a0;color:#745524;border-radius:12px;padding:9px 14px;font-size:.85rem;font-weight:600}
+.sx-hub-nav{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}
+.sx-hub-nav a{display:block;padding:10px 14px;border-radius:999px;background:white;border:1px solid #c8e4f7;text-decoration:none;font-weight:700;color:#165985}
+.sx-hub-nav a:hover,.sx-hub-nav a:focus-visible{background:#d7eeff;color:#092a53}
+.sx-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.sx-card{background:#fff;border:1px solid #cee5f5;border-radius:23px;padding:clamp(16px,2.8vw,29px);box-shadow:0 8px 24px rgba(23,77,118,.07);min-width:0;scroll-margin-top:100px}
+.sx-wide{grid-column:1/-1}
+.sx-card h3{font-size:1.26rem;color:#092a53;margin:0 0 14px}
+.sx-card h4,.sx-seat-map h4,.sx-member-log h4,.sx-crowd h4{font-size:1rem;color:#153f65;margin:14px 0 8px}
+.sx-note{font-size:.84rem;color:#526d85;line-height:1.65;margin:7px 0}
+.sx-message{font-weight:700;color:#176996;font-size:.85rem;line-height:1.5;margin:7px 0;overflow-wrap:anywhere}
+.sx-message:empty{display:none}
+.sx-actions,.sx-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0}
+.sx-actions .sc-input,.sx-actions .sc-select{flex:1;min-width:100px;max-width:100%;width:auto}
+.sx-actions .sc-btn{flex:0 1 auto;white-space:normal}
+.sx-dashboard .sc-btn,.sx-seat-map .sc-btn,.sx-recent .sc-btn{border:1px solid #bddcf1;border-radius:10px;padding:8px 12px;background:#f2faff;color:#155781;font-weight:700;cursor:pointer;font-size:.82rem;line-height:1.4;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.sx-dashboard .sc-btn-primary{background:#177ab6;color:#fff;border-color:#177ab6}
+.sx-dashboard .sc-btn:hover,.sx-recent .sc-btn:hover{filter:brightness(.96)}
+.sx-dashboard .sc-btn:disabled,.sx-seat-map .sc-btn:disabled{cursor:not-allowed;opacity:.55}
+.sx-dashboard :focus-visible,.sx-seat-map :focus-visible,.sx-recent :focus-visible{outline:3px solid #368bc9;outline-offset:2px}
+.sx-order{border:1px solid #d9eaf6;border-radius:16px;padding:15px;margin-top:12px;background:#fafdff}
+.sx-order .sx-row{margin:0 0 8px;justify-content:space-between}
+.sx-order small{font-size:.75rem;color:#526d85}
+.sx-items{font-size:.88rem;line-height:1.6;color:#294f6e;overflow-wrap:anywhere}
+.sx-price{color:#096b9d;font-weight:800}
+.sx-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:12px 0}
+.sx-stage{padding:9px 3px;text-align:center;background:#edf2f6;color:#617789;border-radius:9px;font-size:.78rem;font-weight:600;line-height:1.4}
+.sx-stage[data-done=true]{background:#d5eeff;color:#17618c}
+.sx-stage[aria-current=step]{background:#167cb6;color:#fff}
+.sx-deal{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e0edf6;padding:10px 0;font-size:.86rem;overflow-wrap:anywhere}
+.sx-deal:last-child{border-bottom:0}
+.sx-deal>div{min-width:0}
+.sx-deal p{margin:3px 0}
+.sx-deal .sc-btn{flex-shrink:0}
+#sx-budget{margin-top:20px;border-top:1px solid #d8e9f5;padding-top:10px}
+.sx-balance{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#edf8ff;border-radius:13px;padding:13px;margin:12px 0}
+.sx-balance strong{font-size:1.2rem;color:#0e6f9e}
+.sx-tag{border-radius:999px;background:#edf7ef;padding:5px 8px;color:#287647;font-size:.75rem;white-space:nowrap}
+.sx-sold{display:block;color:#9f3737;font-weight:700;background:#fff1f1;padding:4px 8px;border-radius:7px;font-size:.8rem}
+.sx-unavailable .order-name{cursor:not-allowed!important;opacity:.65}
+.sx-unavailable .order-check-mark{background:#f0e4e4!important;border-color:#ad7777!important;color:#9f3737!important}
+.sx-unavailable .order-check-mark::after{content:"×";font-weight:900}
+.sx-unavailable .order-quantity{opacity:.5;cursor:not-allowed}
+.sx-notice{border:1px solid #dbeaf5;border-radius:11px;padding:9px 11px;margin:8px 0}
+.sx-notice summary{font-weight:700;cursor:pointer;color:#1a4f72}
+.sx-meter{width:100%;height:10px;accent-color:#3599ca;border-radius:999px}
+.sx-survey-row{display:grid;grid-template-columns:minmax(80px,1fr) 1fr 24px;align-items:center;gap:8px;font-size:.82rem;margin:7px 0}
+.sx-seat-map,.sx-member-log,.sx-crowd,.sx-recent{padding:14px;background:#f1f9ff;border:1px solid #d0e6f5;border-radius:15px;margin:14px 0;color:#244e71;min-width:0}
+.sx-seat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;background:white;border:1px dashed #b4d5ea;border-radius:13px;padding:9px}
+.sx-map-window,.sx-map-counter{grid-column:1/-1;padding:6px;text-align:center;font-size:.75rem;letter-spacing:.03em;border-radius:7px;background:#e1f2fe;color:#28658e;font-weight:700}
+.sx-map-counter{background:#f4e9db;color:#725434}
+.sx-seat-map .sx-seat{padding:7px 3px;min-height:46px;line-height:1.3;font-size:.75rem}
+.sx-seat-map .sx-seat[data-state=selected]{background:#177ab6;border-color:#177ab6;color:white;opacity:1}
+.sx-seat-map .sx-seat[data-state=unavailable]{background:#e6ebef;color:#657582;border-color:#d7dfe4}
+.sx-activity{list-style:none;padding:0;margin:0;max-height:195px;overflow:auto}
+.sx-activity li{border-bottom:1px solid #d7e8f4;padding:8px 0;font-size:.78rem;overflow-wrap:anywhere}
+.sx-recent{margin:7px 0 10px;padding:10px}
+.sx-recent .sx-actions{margin:6px 0 0}
+.sx-recent .sc-btn{padding:5px 8px;font-size:.76rem}
+.sx-crowd .sx-meter{display:block;margin:10px 0}
+#demo-complete .demo-complete-card{max-height:90vh;overflow:auto}
+#demo-complete .sx-track{margin:10px 0}
+#demo-complete .sc-btn{display:inline-block;text-decoration:none}
+.sc-service-hero a[href="#sc-visit-hub"]{display:inline-flex;margin-top:10px;border:1px solid #abd1ef;color:#0d5a8c;background:#fff;padding:8px 12px;border-radius:12px;text-decoration:none;font-weight:700}
+@media(max-width:760px){.sx-grid{grid-template-columns:1fr}.sx-wide{grid-column:auto}.sx-hub-nav{gap:6px}.sx-hub-nav a{padding:8px 10px;font-size:.8rem}.sx-order .sx-row{gap:5px;justify-content:flex-start}.sx-stage{font-size:.71rem}.sx-card{scroll-margin-top:80px}}
+@media(max-width:390px){.sx-seat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sx-deal{flex-wrap:wrap}.sx-balance{flex-wrap:wrap}}
+
+/* V8 — customer-side entry and managed availability */
+.sx-admin-link{display:inline-block;color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;margin-left:8px}
+.sx-admin-link:focus-visible{outline:2px solid #4296d1;outline-offset:4px}
+.menu-card[hidden],.sx-new-product[hidden]{display:none!important}
+
+/* V9 — opaque, read-only prices on top of the three original menu artworks.
+   Coordinates are normalized to each language's original pixel dimensions.
+   Price fields stay in the same positions as the printed prices, independent
+   of the checkbox and quantity controls. */
+.sc-price-surface{position:relative;isolation:isolate;container-type:inline-size}
+.sc-price-mask{
+  position:absolute;display:block;z-index:3;pointer-events:none;
+  top:var(--sc-mask-top-ko);height:var(--sc-mask-height-ko);
+  left:32.25%;width:5.55%;background:#eff7fc;
+}
+.sc-price-mask[data-side=right]{left:77.35%;width:5.45%}
+.sc-price-surface[data-sc-menu-layout=en] .sc-price-mask{top:var(--sc-mask-top-en);height:var(--sc-mask-height-en);left:33.9%;width:8.15%}
+.sc-price-surface[data-sc-menu-layout=en] .sc-price-mask[data-side=right]{left:79%;width:8.15%}
+.sc-price-surface[data-sc-menu-layout=ja] .sc-price-mask{top:var(--sc-mask-top-ja);height:var(--sc-mask-height-ja);left:34.65%;width:8.75%}
+.sc-price-surface[data-sc-menu-layout=ja] .sc-price-mask[data-side=right]{left:79.25%;width:8.45%}
+.sc-price-surface .sc-live-price{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  z-index:4;box-sizing:border-box;pointer-events:none;
+  top:var(--sc-price-y-ko);transform:translateY(-50%);
+  left:32.25%;width:5.55%;height:1.68%;
+  border:1px solid #78b8dd;border-radius:4px;background:#f7fbff;
+  color:#123f61;white-space:nowrap;overflow:hidden;
+  font-size:clamp(10px,1.15cqw,17px);font-weight:800;
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.sc-price-surface .sc-live-price[data-side=right]{left:77.35%;width:5.45%}
+.sc-price-surface[data-sc-menu-layout=en] .sc-live-price{
+  top:var(--sc-price-y-en);left:33.9%;width:8.15%;height:1.60%;
+}
+.sc-price-surface[data-sc-menu-layout=en] .sc-live-price[data-side=right]{left:79%;width:8.15%}
+.sc-price-surface[data-sc-menu-layout=ja] .sc-live-price{
+  top:var(--sc-price-y-ja);left:34.65%;width:8.75%;height:1.60%;
+}
+.sc-price-surface[data-sc-menu-layout=ja] .sc-live-price[data-side=right]{left:79.25%;width:8.45%}
+.sc-price-surface .sc-live-price.sc-price-long{font-size:clamp(8px,.9cqw,13px)}
+.sc-price-surface .sc-live-price{letter-spacing:-.025em}
+
+/* V10: visible recovery guidance if a required script or initialization fails. */
+.sc-init-error{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99999;width:min(680px,calc(100% - 32px));box-sizing:border-box;padding:16px 20px;background:#fff5e9;border:2px solid #c98438;border-radius:12px;color:#633b12;font-weight:700;box-shadow:0 6px 24px #173f6333;line-height:1.6}
+.sc-init-error button{margin-left:10px;padding:6px 14px;border:1px solid #b57935;border-radius:8px;background:#fff;color:#633b12;cursor:pointer}

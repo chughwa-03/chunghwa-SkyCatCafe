@@ -1,0 +1,11 @@
+/* Goods shop entry — independent of the existing ordering and admin UI. */
+.goods-teaser {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:center;min-width:0;padding:20px 20px 20px 24px;border:1px solid #cce7f8;border-radius:23px;background:linear-gradient(115deg,#fff,#e7f6ff);box-shadow:0 4px 16px #3d81b00d;}
+.goods-teaser h2 {margin:3px 0 7px;color:var(--navy);font-size:clamp(19px,2.2vw,27px);letter-spacing:-.7px;line-height:1.2;}
+.goods-teaser p:not(.section-kicker) {font-size:13px;margin:0 0 13px;color:var(--ink);}
+.goods-teaser-link {display:inline-flex;background:#168bc8;color:#fff;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:800;transition:background .2s;white-space:nowrap;}
+.goods-teaser-link:hover,.goods-teaser-link:focus-visible {background:#08609a;color:#fff;}
+.goods-teaser-images {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.goods-teaser-images img {width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 3px 8px #24658413;}
+@media(min-width:1101px){.intro-grid .goods-teaser {grid-column:1/3;grid-row:2;align-self:start;margin-top:18px}.intro-grid .menu-area {grid-column:3;grid-row:1/3}.intro-grid {grid-template-rows:auto 1fr} nav.pc{gap:clamp(0px,1vw,12px)}nav.pc a{padding:10px clamp(8px,1vw,18px);font-size:clamp(13px,1.15vw,16px)}}
+@media(min-width:711px) and (max-width:1100px){.intro-grid {grid-template-columns:42% 1fr!important}.intro-grid .goods-teaser,.intro-grid .menu-area {grid-column:1/-1}.intro-grid .goods-teaser{margin-top:20px}.intro-grid .menu-area{border-left:0;border-top:1px solid #d7eafa;padding:21px 0 0}nav.pc{display:none}.mobile-nav{display:block;position:relative;flex-shrink:0}.mobile-nav summary{cursor:pointer;list-style:none;background:#e1f3fd;border:1px solid #c8e4f5;border-radius:13px;padding:8px 13px;font-weight:900}.mobile-nav nav{position:absolute;right:0;top:calc(100% + 8px);display:grid;gap:3px;width:min(240px,82vw);padding:9px;background:#fff;border:1px solid #c8e4f5;border-radius:15px;box-shadow:0 10px 22px #2771a033}.mobile-nav nav a{padding:10px;font-weight:800}}
+@media(max-width:710px){.goods-teaser{width:100%;padding:18px;grid-template-columns:1fr}.goods-teaser-images{max-width:420px;gap:10px}}
