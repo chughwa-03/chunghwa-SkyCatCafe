@@ -239,6 +239,8 @@ html:not([lang=ko]) .goods-page .product-info h3,html:not([lang=ko]) .goods-page
   --stage-pattern: radial-gradient(circle, #fff9 1.5px, transparent 1.6px);
   --stage-pattern-size: 18px 18px;
   --stage-image-size: 85%;
+  --stage-shift-x: 0%;
+  --stage-shift-y: 0%;
   --stage-motif-size: 17%;
   --stage-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 88'%3E%3Cpath fill='%23fff9e0' stroke='%23b49a58' stroke-width='1.7' d='M27 4l5 13 13 5-13 5-5 13-5-13-13-5 13-5zM65 45l4 10 10 4-10 4-4 10-4-10-10-4 10-4z'/%3E%3Ccircle cx='15' cy='61' r='4' fill='%23fff' opacity='.85'/%3E%3C/svg%3E");
 }
@@ -326,6 +328,55 @@ html:not([lang=ko]) .goods-page .product-info h3,html:not([lang=ko]) .goods-page
   --stage-image-size: 92%;
 }
 
+/* Optical centering: offsets are percentages of the original square photo.
+   Match the merchandise itself, including handles, rings and stands. */
+.goods-page :where(.product-card, #product-dialog)[data-sku="mug-01"] { --stage-shift-x: -1%; --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="mug-02"] { --stage-shift-x: 2%; --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="mug-03"] { --stage-shift-x: -1%; --stage-shift-y: 4%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="mug-04"] { --stage-shift-x: 2%; --stage-shift-y: 3%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="coaster-01"] { --stage-shift-x: -5%; --stage-shift-y: -2%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="coaster-02"] { --stage-shift-x: 6.5%; --stage-shift-y: -2%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="coaster-03"] { --stage-shift-x: -3%; --stage-shift-y: 6%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="coaster-04"] { --stage-shift-x: 6.5%; --stage-shift-y: 6%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="lamp-01"] { --stage-shift-x: -12%; --stage-shift-y: -5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="lamp-02"] { --stage-shift-x: -1%; --stage-shift-y: -4%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="lamp-03"] { --stage-shift-x: -3%; --stage-shift-y: 1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="lamp-04"] { --stage-shift-x: 4%; --stage-shift-y: 6.5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-01"] { --stage-shift-x: -8%; --stage-shift-y: -2.5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-02"] { --stage-shift-x: -3%; --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-03"] { --stage-shift-x: -4%; --stage-shift-y: 3%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-04"] { --stage-shift-x: 4.5%; --stage-shift-y: 4%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="acrylic-keyring-01"] { --stage-shift-x: -12%; --stage-shift-y: 1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="acrylic-keyring-02"] { --stage-shift-x: 6.5%; --stage-shift-y: 1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="acrylic-keyring-03"] { --stage-shift-x: -11%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="acrylic-keyring-04"] { --stage-shift-x: 13%; --stage-shift-y: 3%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-keyring-01"] { --stage-shift-x: -10%; --stage-shift-y: -1.5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-keyring-02"] { --stage-shift-x: 3%; --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-keyring-03"] { --stage-shift-x: -8%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="plush-keyring-04"] { --stage-shift-x: 12%; --stage-shift-y: 3%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stand-01"] { --stage-shift-x: -10%; --stage-shift-y: -2%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stand-02"] { --stage-shift-x: 4%; --stage-shift-y: -4%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stand-03"] { --stage-shift-x: -6%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stand-04"] { --stage-shift-x: 8%; --stage-shift-y: 7%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stickers-01"] { --stage-shift-x: -7%; --stage-shift-y: -3%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stickers-02"] { --stage-shift-x: 7%; --stage-shift-y: -4%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stickers-03"] { --stage-shift-x: -6%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="stickers-04"] { --stage-shift-x: 6%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="postcard-01"] { --stage-shift-x: -12%; --stage-shift-y: -2%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="postcard-02"] { --stage-shift-x: 12%; --stage-shift-y: -2%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="postcard-03"] { --stage-shift-x: -12%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="postcard-04"] { --stage-shift-x: 12%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="bag-01"] { --stage-shift-x: -6%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="bag-02"] { --stage-shift-x: 7%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="bag-03"] { --stage-shift-x: -6%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="bag-04"] { --stage-shift-x: 7%; --stage-shift-y: 5%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="keycap-01"] { --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="keycap-02"] { --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="keycap-03"] { --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="keycap-04"] { --stage-shift-y: -1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="keyboard-01"] { --stage-shift-y: 1%; }
+.goods-page :where(.product-card, #product-dialog)[data-sku="mouse-01"] { --stage-shift-x: -1%; --stage-shift-y: 2%; }
+
 .goods-page .product-photo.food,
 .goods-page .dialog-product-stage {
   display: grid;
@@ -367,14 +418,16 @@ html:not([lang=ko]) .goods-page .product-info h3,html:not([lang=ko]) .goods-page
 
 .goods-page .product-photo.food img,
 .goods-page .dialog-product-stage #dialog-image {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: block;
   z-index: 1;
   width: var(--stage-image-size);
   height: var(--stage-image-size);
   max-width: 100%;
   max-height: 100%;
-  margin: 0;
+  margin: auto;
+  transform: translate(var(--stage-shift-x), var(--stage-shift-y));
   border-radius: 10px;
   object-fit: contain;
   object-position: center;
