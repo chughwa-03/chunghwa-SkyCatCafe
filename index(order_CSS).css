@@ -1507,14 +1507,11 @@
         position: absolute;
         right: 19px;
         top: 16px;
-        width: 43px;
-        height: 43px;
         display: grid;
         place-items: center;
         background: white;
         border: 3px solid #2a70a3;
         border-radius: 50%;
-        font-size: 27px;
         font-weight: 900;
         color: #183c6a;
         z-index: 1;
@@ -1982,9 +1979,6 @@
         .order-close {
           top: 15px;
           right: 18px;
-          width: 35px;
-          height: 35px;
-          font-size: 21px;
         }
         .order-payment-head h2 {
           font-size: 33px;
@@ -5781,8 +5775,6 @@
       }
 
       #full-menu .selection-close {
-        width: 38px;
-        height: 38px;
         display: grid;
         place-items: center;
         flex: none;
@@ -5790,7 +5782,6 @@
         border: 2px solid #6cbae2;
         background: #fff;
         color: #0a4979;
-        font-size: 25px;
         font-weight: 800;
         line-height: 1;
         text-decoration: none;
@@ -6189,31 +6180,6 @@
         cursor: pointer;
       }
 
-      .photo-dialog .zoom-close::before,
-      .photo-dialog .zoom-close::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 18px;
-        height: 2.5px;
-        border-radius: 2px;
-        background: currentColor;
-        transform-origin: center;
-      }
-
-      .photo-dialog .zoom-close::before {
-        transform: translate(-50%, -50%) rotate(45deg);
-      }
-
-      .photo-dialog .zoom-close::after {
-        transform: translate(-50%, -50%) rotate(-45deg);
-      }
-
-      .photo-dialog .zoom-close span {
-        font-size: 0;
-      }
-
       .photo-dialog .zoom-close:hover {
         background: #eaf7ff;
       }
@@ -6238,13 +6204,6 @@
         }
         .photo-dialog .photo-shell > img {
           max-height: calc(100dvh - 212px);
-        }
-        .photo-dialog .zoom-close {
-          width: 42px;
-          height: 42px;
-          min-width: 42px;
-          min-height: 42px;
-          flex-basis: 42px;
         }
       }
 

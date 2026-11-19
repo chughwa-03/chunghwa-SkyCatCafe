@@ -1,0 +1,90 @@
+/* Sky Cat Cafe — shared design tokens and UI components */
+:root {
+  --sc-content-max: 1370px;
+  --sc-content-width: 94%;
+  --sc-header-size: 72px;
+  --sc-space-1: 4px;
+  --sc-space-2: 8px;
+  --sc-space-3: 12px;
+  --sc-space-4: 16px;
+  --sc-space-5: 24px;
+  --sc-space-6: 32px;
+  --sc-close-size: 44px;
+  --sc-focus: #167eb5;
+}
+@media (max-width: 710px) {
+  :root { --sc-content-width: 91%; --sc-header-size: 69px; }
+}
+
+/* Keep native buttons, links and labels; only their presentation is shared. */
+:where(.sc-close) { position: relative; display: grid; }
+.sc-close.sc-close,
+#full-menu .sc-close,
+.goods-page .sc-close,
+.photo-dialog .sc-close {
+  box-sizing: border-box;
+  width: var(--sc-close-size);
+  height: var(--sc-close-size);
+  min-width: var(--sc-close-size);
+  min-height: var(--sc-close-size);
+  max-width: var(--sc-close-size);
+  max-height: var(--sc-close-size);
+  flex: 0 0 var(--sc-close-size);
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.sc-close::before, .sc-close::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  pointer-events: none;
+}
+.sc-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.sc-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.sc-close > span { font-size: 0; }
+.sc-close:focus-visible {
+  outline: 3px solid var(--sc-focus);
+  outline-offset: 2px;
+}
+.sc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-space-2);
+  min-width: 0;
+}
+.sc-actions > * { min-width: 0; max-width: 100%; }
+.sc-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-space-3);
+}
+.sc-dialog-head > :first-child { min-width: 0; overflow-wrap: anywhere; }
+.sc-field {
+  display: grid;
+  gap: var(--sc-space-2);
+  min-width: 0;
+}
+.sc-field > :is(input, select, textarea) { min-width: 0; max-width: 100%; }
+.sc-button {
+  box-sizing: border-box;
+  min-height: 44px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.sc-button:focus-visible { outline: 3px solid var(--sc-focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .sc-close, .sc-button { transition: none; animation: none; }
+}

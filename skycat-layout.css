@@ -2,15 +2,15 @@
    Full-width backgrounds, dialogs, images and each section's internal
    layout remain independent. No viewport zoom or fixed aspect ratio. */
 :root {
-  --skycat-content-max: 1370px;
-  --skycat-content-percent: 94%;
-  --skycat-header-height: 72px;
+  --skycat-content-max: var(--sc-content-max);
+  --skycat-content-percent: var(--sc-content-width);
+  --skycat-header-height: var(--sc-header-size);
 }
 
 @media (max-width: 710px) {
   :root {
-    --skycat-content-percent: 91%;
-    --skycat-header-height: 69px;
+    --skycat-content-percent: var(--sc-content-width);
+    --skycat-header-height: var(--sc-header-size);
   }
 }
 

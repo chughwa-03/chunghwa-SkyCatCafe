@@ -58,7 +58,7 @@ bundle-01|Sky Cat Desk Duo Set|空猫デスクデュオセット`;
 하늘색 머그컵 속 도트 고양이|Pixel cat in a sky-blue mug|水色マグのドット猫
 하늘고양이 카페 로고|Sky Cat Cafe logo|空猫カフェのロゴ
 하늘고양이 카페 공식 굿즈 컬렉션 — 포트폴리오용 가상 굿즈샵|Official Sky Cat goods collection — portfolio demo shop|空猫カフェ公式グッズコレクション — ポートフォリオ用ショップ
-포트폴리오용 가상 카페 웹사이트입니다. 실제 판매 및 결제는 진행되지 않습니다.|Fictional cafe portfolio. No real sales or payments.|架空のカフェサイトです。実際の販売・決済はありません。
+체험용 굿즈샵 · 실제 판매 및 결제 없음|Demo shop · No real sales or payments|体験ショップ・実際の販売や決済はありません
 주 메뉴|Main navigation|メインメニュー
 모바일 메뉴|Mobile navigation|モバイルメニュー
 ☰ 메뉴|☰ Menu|☰ メニュー
@@ -86,7 +86,7 @@ bundle-01|Sky Cat Desk Duo Set|空猫デスクデュオセット`;
 누워 있는 하늘고양이 스탠드|Relaxing Sky Cat stand|ごろ寝空猫スタンド
 🐾 일상에 귀여움을 더해요 ♡|🐾 Add a little cuteness to your day ♡|🐾 日常にかわいさをプラス ♡
 굿즈 컬렉션|Goods collection|グッズコレクション
-좋아하는 디자인을 선택해 나만의 하늘고양이 굿즈를 모아보세요.|Choose your favorite designs and start your Sky Cat collection.|お気に入りのデザインを選んで空猫グッズを集めよう。
+상품 종류와 디자인을 선택하세요.|Choose a product and design.|商品とデザインを選んでください。
 🛒 장바구니|🛒 Cart|🛒 カート
 품목 분류|Product categories|商品カテゴリ
 전체|All|すべて
@@ -108,10 +108,8 @@ bundle-01|Sky Cat Desk Duo Set|空猫デスクデュオセット`;
 구매 가능 상품만|In-stock only|購入可能な商品だけ
 찜한 상품만|Favorites only|お気に入りだけ
 검색 초기화|Reset filters|検索をリセット
-가상 굿즈샵 · 모든 상품은 포트폴리오용 시안이며 실제 결제나 배송은 이루어지지 않습니다.|Demo shop · All goods are concepts; no real payment or delivery.|体験ショップ・商品はすべて制作案です。実際の決済・配送はありません。
-조건에 맞는 굿즈가 없어요. 검색어 또는 필터를 변경해 보세요.|No matching goods. Try a different search or filter.|該当するグッズがありません。検索条件を変更してください。
-※ 모든 굿즈는 포트폴리오용 상품 시안입니다.|All goods are portfolio concepts.|※ 全グッズはポートフォリオ用の制作案です。
-본 사이트는 실제 영업하지 않는 가상 카페 소개 페이지입니다.|This is a fictional cafe portfolio, not a real business.|実際には営業していない架空のカフェサイトです。
+검색 결과가 없습니다. 검색어나 필터를 변경하세요.|No matching products. Change your search or filter.|該当商品がありません。検索条件を変更してください。
+가상 카페 포트폴리오|Fictional cafe portfolio|架空のカフェのポートフォリオ
 굿즈샵 빠른 메뉴|Shop quick actions|ショップクイックメニュー
 굿즈샵 맨 위로 이동|Back to top of shop|ショップの先頭へ
 ↑ 목록 위로|↑ Back to list|↑ 一覧の先頭へ
@@ -155,16 +153,15 @@ bundle-01|Sky Cat Desk Duo Set|空猫デスクデュオセット`;
 상세보기|Details|詳細を見る
 담기 +|Add +|追加 +
 닫기|Close|閉じる
-포트폴리오용 상품 이미지입니다. 실제 상품 판매는 진행하지 않습니다.|Portfolio product image. Not for actual sale.|ポートフォリオ用商品画像です。実際の販売はありません。
 장바구니 담기|Add to cart|カートに追加
 바로 구매|Buy now|今すぐ購入
 목록으로 돌아가기|Back to list|一覧へ戻る
 장바구니|Cart|カート
 장바구니 닫기|Close cart|カートを閉じる
-아직 담긴 굿즈가 없어요. 마음에 드는 굿즈를 골라보세요!|Your cart is empty. Choose something you love!|カートに商品がありません。お気に入りを選んでね！
+장바구니가 비어 있습니다.|Your cart is empty.|カートに商品がありません。
 총|Total|合計
 개 상품|items|点
-실제 금전 거래가 발생하지 않는 가상 구매입니다. 배송비는 계산하지 않습니다.|Demo purchase only. No real money or shipping fees.|体験購入です。実際の決済・送料はありません。
+실제 결제 및 배송은 진행되지 않습니다.|No actual payment or delivery.|実際の決済・配送はありません。
 쇼핑 계속하기|Continue shopping|買い物を続ける
 가상 구매하기|Place demo order|体験注文する
 굿즈 구매 완료!|Goods purchase complete!|グッズ購入完了！

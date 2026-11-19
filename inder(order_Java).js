@@ -38,7 +38,7 @@ globalThis.SkyCatTranslations = (() => {
 오신 것을 환영해요! ♡|Sky Cat Cafe! ♡|ようこそ！ ♡
 하늘고양이 카페는|Sky Cat Cafe is|空猫カフェは
 이런 곳이에요!|a place like this!|こんな場所です！
-하늘처럼 편안하고 따뜻한 분위기 속에서 맛있는 음료와 디저트를 즐길 수 있는 감성 카페입니다.|Enjoy delicious drinks and desserts in a warm, peaceful atmosphere inspired by the sky.|空のように穏やかで暖かい空間で、おいしい飲み物とデザートを楽しめるカフェです。
+커피와 디저트를 즐기는 하늘색 테마 카페입니다.|A sky-blue themed cafe serving drinks and desserts.|ドリンクとデザートを楽しむ空色のカフェです。
 향긋한 커피|Fragrant coffee|香り高いコーヒー
 매일 신선한 원두로 내리는 커피|Coffee brewed from fresh beans daily|毎日新鮮な豆で淹れるコーヒー
 편안한 공간|Cozy space|くつろぎの空間
@@ -76,7 +76,7 @@ globalThis.SkyCatTranslations = (() => {
 고양이 장식|Cat decorations|猫の装飾
 고양이와 함께하는 휴식|Relaxing with a cat|猫と過ごす休息
 오시는 길 · 매장 안내|Visit · Cafe information|アクセス・店舗案内
-하늘고양이 카페는 웹사이트 디자인 포트폴리오를 위한 가상 브랜드입니다. 실제 방문 가능한 매장은 없습니다.|Sky Cat Cafe is a fictional brand for a website portfolio. There is no physical store to visit.|空猫カフェはWebデザインのための架空ブランドです。実際に訪問できる店舗はありません。
+하늘고양이 카페는 가상 브랜드이며 실제 매장은 없습니다.|Sky Cat Cafe is fictional. There is no physical store.|空猫カフェは架空のブランドです。実店舗はありません。
 운영시간 (예시)|Opening hours (example)|営業時間（例）
 휴무일 (예시)|Closed days (example)|定休日（例）
 매주 월요일|Every Monday|毎週月曜日
@@ -85,7 +85,7 @@ globalThis.SkyCatTranslations = (() => {
 가상 카페 · 실제 영업 정보 아님|Fictional cafe · Not actual business hours|架空カフェ・実際の営業情報ではありません
 ← 홈페이지로 돌아가기|← Back to homepage|← ホームページへ戻る
 ☁ 메뉴 선택 · 가상 주문|☁ Select menu · Demo order|☁ メニュー選択・仮想注文
-🐾 각 가격 오른쪽의 □ 선택과 수량(1~5개)을 지정하세요. 모바일에서는 메뉴판을 좌우로 움직일 수 있습니다. 실제 결제는 발생하지 않습니다.|🐾 Check items and select quantities (1–5). On mobile, scroll the menu board sideways. No real payment occurs.|🐾 チェック欄と数量（1～5個）を選択してください。スマホではメニュー表を横にスクロールできます。実際の決済はありません。
+메뉴를 체크하고 수량(1~5개)을 선택하세요. 모바일에서는 좌우로 스크롤할 수 있습니다.|Select items and quantities (1–5). Scroll sideways on mobile.|商品にチェックを入れて数量（1〜5個）を選択してください。スマートフォンでは横にスクロールできます。
 전체 32종|All 32 items|全32種
 커피 · 콜드브루|Coffee · Cold brew|コーヒー・コールドブリュー
 음료 · 티 · 에이드|Drinks · Tea · Ade|ドリンク・紅茶・エード
@@ -122,7 +122,7 @@ globalThis.SkyCatTranslations = (() => {
 실제 주문 접수·결제·정보 저장은 진행되지 않았습니다.|No actual order, payment or information storage occurred.|実際の注文受付・決済・情報保存は行われていません。
 전체 메뉴로 돌아가기|Back to full menu|全メニューへ戻る
 홈으로|Home|ホームへ
-본 사이트는 실제 영업하지 않는 가상 카페 소개 페이지입니다.|This website introduces a fictional cafe, not a real business.|本サイトは実際には営業していない架空カフェの紹介ページです。
+가상 카페 포트폴리오|Fictional cafe portfolio|架空のカフェのポートフォリオ
 검색 가능한 목록 보기|View searchable list|検索できる一覧を見る
 원본 메뉴판 보기|View menu board image|メニュー画像を見る
 메뉴 이름 검색|Search menu names|メニュー名を検索
@@ -157,7 +157,7 @@ globalThis.SkyCatTranslations = (() => {
 실제 개인정보 보호를 위해 가상 정보 자동 입력 버튼을 사용해 주세요.|For privacy, use the fictional autofill button.|個人情報保護のため架空情報の自動入力ボタンをご利用ください。
 가상 정보 자동 입력|Autofill fictional details|架空情報を自動入力
 가상 주문 시연 · 실제 개인정보를 입력하지 마세요. 자동 입력 버튼으로 예시를 사용하세요. 실제 접수 및 저장 없음.|Demo order · Do not enter real personal data. Use autofill. No real order or storage.|仮想注文・実際の個人情報を入力せず自動入力をご利用ください。実際の受付・保存はありません。
-가상 주문 시연입니다. 주문자 입력값은 이 화면으로 전달되지 않습니다.|Demo order. Customer entries are not carried to this screen.|仮想注文です。注文者の入力値はこの画面に引き継がれません。
+주문자 정보는 저장하지 않습니다.|Customer details are not stored.|注文者情報は保存しません。
 카드|Card|カード
 현금|Cash|現金
 가상|Demo|仮想
@@ -233,9 +233,9 @@ globalThis.SkyCatTranslations = (() => {
 시연용 완료 화면|Demo completion screen|体験完了画面
 하늘고양이 카페 로고|Sky Cat Cafe logo|空猫カフェロゴ
 홈페이지 맨 위로 이동|Back to top|ページ上部に戻る
-A안 · HTML·CSS 전용. 1종당 1~5개 수량, CSS 카운터 합산(쉼표 미표시) · 실제 주문 접수 및 저장 없음.|HTML/CSS demo. 1–5 per item. No real order or storage.|HTML/CSS体験。商品ごとに1〜5個。実際の受付・保存なし。
+메뉴별 1~5개까지 선택할 수 있습니다.|Select 1–5 of each item.|商品ごとに1〜5個選べます。
 실제 이름·전화번호·주소를 입력하지 말고 가상의 정보만 사용하세요.|Use fictional details only; do not enter real names, phone numbers or addresses.|実際の氏名・電話番号・住所は入力せず、架空の情報のみを利用してください。
-HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화면으로 전달되지 않습니다.|Portfolio demo. Customer entries are not carried to this screen.|ポートフォリオ体験です。注文者の入力値はこの画面に引き継がれません。`;
+주문자 정보는 저장하지 않습니다.|Customer details are not stored.|注文者情報は保存しません。`;
   const strings = Object.create(null);
   for (const line of rows.split('\n')) { const [ko,en,ja] = line.split('|'); if (ja !== undefined) strings[ko] = {en,ja}; }
   const names = [
@@ -249,15 +249,135 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
     ['Butter Croissant','バタークロワッサン'],['Plain Scone','プレーンスコーン'],['Cat Cookie Set','猫クッキーセット'],['Ham & Cheese Sandwich','ハムチーズサンド']
   ];
   const descriptions = [
-    ['Espresso-based coffee. Enjoy the aroma and taste of the beans.','エスプレッソベースのコーヒー。豆の香りと味をお楽しみください。'],
-    ['A signature Sky Cat Cafe drink with a soft, sweet flavor.','空猫カフェのシグネチャードリンク。まろやかで甘い風味です。'],
-    ['Cold-extracted coffee with a clean aroma and deep flavor.','低温抽出のすっきりした香りと深い味わい。'],
-    ['A non-coffee latte with milky or plant-based flavors.','ミルクや植物由来の風味を楽しめるノンコーヒーラテ。'],
-    ['A delicately fragrant tea for a relaxing moment.','穏やかな香りの紅茶でくつろぎのひとときを。'],
-    ['A refreshing, bright drink for a pleasant break.','爽やかな味わいで気分転換にぴったりの飲み物。'],
-    ['A sweet dessert that pairs well with coffee.','コーヒーに合う甘いデザート。'],
-    ['A light bakery item or snack.','軽く楽しめるベーカリーやおやつ。']
-  ];
+  [
+    "Espresso served over ice.",
+    "氷を入れたすっきりしたエスプレッソ。"
+  ],
+  [
+    "Espresso with smooth milk.",
+    "エスプレッソとミルクのまろやかな組み合わせ。"
+  ],
+  [
+    "A sweet vanilla latte.",
+    "バニラ香る甘いラテ。"
+  ],
+  [
+    "Macchiato with caramel flavor.",
+    "キャラメル風味のマキアート。"
+  ],
+  [
+    "A cloud-inspired signature latte.",
+    "雲をモチーフにしたシグネチャーラテ。"
+  ],
+  [
+    "The signature Sky Cat latte.",
+    "空猫カフェの看板ラテ。"
+  ],
+  [
+    "Latte with honey and cream.",
+    "はちみつとクリームのラテ。"
+  ],
+  [
+    "Sky-blue milk tea.",
+    "空色のミルクティー。"
+  ],
+  [
+    "Smooth cold-extracted coffee.",
+    "低温抽出のすっきりしたコーヒー。"
+  ],
+  [
+    "Cold brew with vanilla cream.",
+    "バニラクリームを添えたコールドブリュー。"
+  ],
+  [
+    "Decaffeinated cold brew.",
+    "デカフェのコールドブリュー。"
+  ],
+  [
+    "Cold brew with condensed milk.",
+    "練乳入りのコールドブリュー。"
+  ],
+  [
+    "Matcha with milk.",
+    "抹茶とミルクの組み合わせ。"
+  ],
+  [
+    "Rich chocolate latte.",
+    "濃厚なチョコレートラテ。"
+  ],
+  [
+    "Sweet strawberry latte.",
+    "苺の甘さを楽しむラテ。"
+  ],
+  [
+    "Mellow sweet potato latte.",
+    "さつまいものやさしい甘さ。"
+  ],
+  [
+    "Black tea scented with bergamot.",
+    "ベルガモット香る紅茶。"
+  ],
+  [
+    "Herbal tea with a light floral aroma.",
+    "ほのかな花の香りのハーブティー。"
+  ],
+  [
+    "Fragrant sweet-tart yuzu tea.",
+    "柚子の香りと甘酸っぱさ。"
+  ],
+  [
+    "Peach-flavored iced tea.",
+    "桃の香りのアイスティー。"
+  ],
+  [
+    "Refreshing sparkling lemon drink.",
+    "レモンが爽やかな炭酸ドリンク。"
+  ],
+  [
+    "Refreshing sky-blue soda.",
+    "空色の爽やかなソーダ。"
+  ],
+  [
+    "Bright, lightly bitter grapefruit ade.",
+    "ほろ苦く爽やかなグレープフルーツエード。"
+  ],
+  [
+    "Strawberry and yogurt smoothie.",
+    "苺とヨーグルトのスムージー。"
+  ],
+  [
+    "Cake with strawberries and whipped cream.",
+    "苺と生クリームのケーキ。"
+  ],
+  [
+    "Cheesecake with blueberries.",
+    "ブルーベリーのチーズケーキ。"
+  ],
+  [
+    "Cake with chocolate ganache.",
+    "チョコガナッシュのケーキ。"
+  ],
+  [
+    "Cloud-shaped macaron.",
+    "雲モチーフのマカロン。"
+  ],
+  [
+    "Buttery croissant.",
+    "バター香るクロワッサン。"
+  ],
+  [
+    "Classic plain scone.",
+    "シンプルなプレーンスコーン。"
+  ],
+  [
+    "Cat-themed cookie set.",
+    "猫モチーフのクッキーセット。"
+  ],
+  [
+    "Ham and cheese sandwich.",
+    "ハムとチーズのサンドイッチ。"
+  ]
+];
   return {strings,names,descriptions};
 })();
 
@@ -291,7 +411,7 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
     shipping: null, payment: null, completed: null, favorites: new Set(), favoritesOnly: false, useCoupon: false };
   const store=globalThis.SkyCatStore;
   if(!store){
-    const notice=document.createElement('div');notice.className='sc-init-error';notice.setAttribute('role','alert');notice.textContent='skycat-store.js 파일을 불러오지 못했습니다. V10 압축 파일을 모두 같은 폴더에 풀어 주세요.';document.body.prepend(notice);return;
+    const notice=document.createElement('div');notice.className='sc-init-error';notice.setAttribute('role','alert');notice.textContent='필요한 파일을 불러오지 못했습니다. 설치 폴더를 확인해 주세요.';document.body.prepend(notice);return;
   }
   let adminConfig=store.config();
   let changedCatalog=false;
@@ -749,9 +869,9 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
     const fill=btn('가상 정보 자동 입력');
     $('.order-fields',form).before(fill);
     fill.addEventListener('click',()=>{ $('#customer-name').value='테스트고양이';$('#customer-phone').value='010-0000-0000';$('#customer-address').value='하늘시 구름길 1'; });
-    const tag=$('.order-demo-tag',form);tag.dataset.scI18n='가상 주문 시연 · 실제 개인정보를 입력하지 마세요. 자동 입력 버튼으로 예시를 사용하세요. 입력한 주문자 정보는 저장하지 않습니다.';tag.textContent=t(tag.dataset.scI18n);
+    const tag=$('.order-demo-tag',form);tag.dataset.scI18n='가상 정보 자동 입력을 이용하세요. 개인정보는 저장하지 않습니다.';tag.textContent=t(tag.dataset.scI18n);
     summary=make('div','sc-summary');summary.setAttribute('aria-live','polite');$('.demo-complete-card .demo-small').after(summary);
-    const small=$('.demo-complete-card .demo-small');small.dataset.scI18n='가상 주문 시연입니다. 주문자 입력값은 이 화면으로 전달되지 않습니다.';small.textContent=t(small.dataset.scI18n);
+    const small=$('.demo-complete-card .demo-small');small.dataset.scI18n='주문자 정보는 저장하지 않습니다.';small.textContent=t(small.dataset.scI18n);
     form.addEventListener('submit',e=>{
       e.preventDefault();
       if(state.completed)return;
@@ -780,8 +900,8 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
   function productName(m){return !m?'—':currentLanguage==='ko'||m.edited?m.name:catalog.names[Number(m.id)]?.[currentLanguage==='en'?0:1]||m.name;}
   function productDescription(m){
     if(currentLanguage==='ko'||m.edited)return m.description||m.name;
-    const desc=catalog.descriptions[Math.floor(Number(m.id)/4)]?.[currentLanguage==='en'?0:1];
-    return desc?productName(m)+' — '+desc+(currentLanguage==='en'?' (Portfolio example)':'（ポートフォリオ例）'):m.description||m.name;
+    const desc=catalog.descriptions[Number(m.id)]?.[currentLanguage==='en'?0:1];
+    return desc?productName(m)+' — '+desc:m.description||m.name;
   }
   function translateUnit(key){return t(key);}
   function resultText(count){
@@ -919,8 +1039,8 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
   // V4: customer service. All forms and purchases are fictional demonstrations.
   const serviceTranslations = `예약 · 고객서비스|Reservations · Service|予約・サービス
 하늘고양이와 함께하는 특별한 하루|A special day with Sky Cat|空猫と過ごす特別な一日
-방문 예약부터 나만의 음료, 달콤한 혜택까지 한 곳에서.|Plan a visit, customize a drink and earn rewards.|来店予約、ドリンクのカスタム、特典を一か所で。
-포트폴리오용 가상 서비스 · 실제 접수 및 결제 없음|Portfolio demo · No real bookings or payments|ポートフォリオ用・実際の受付や決済なし
+예약, 문의, 음료 옵션과 적립 서비스를 이용할 수 있습니다.|Reservations, inquiries, drink options and rewards.|予約・お問い合わせ・ドリンクのカスタム・ポイントサービス。
+체험용 서비스 · 실제 예약 및 결제 없음|Demo service · No actual booking or payment|体験サービス・実際の予約や決済はありません
 고객 서비스|Customer service|お客様サービス
 01 예약|01 Reservation|01 予約
 02 문의 · FAQ|02 Inquiry · FAQ|02 お問い合わせ・FAQ
@@ -1207,7 +1327,7 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
   const xlink=(ko,en,ja,hash)=>{const a=ux('a','sc-btn',ko,en,ja);a.href=hash;return a;};
   const xnote=(ko,en,ja)=>ux('p','sx-note',ko,en,ja);
   const xtranslations=`나의 카페 이용 공간|My cafe experience|マイカフェ体験
-주문부터 방문 후기까지, 하늘고양이와 함께 만들어가는 작은 일상.|From orders to visit reviews, make a little everyday moment with Sky Cat.|注文から来店レビューまで、空猫と小さな日常を。
+주문 내역, 적립금, 방문 후기를 확인할 수 있습니다.|Check orders, rewards and visit reviews.|注文履歴、ポイント、来店レビューを確認できます。
 가상 체험 전용 · 실제 매장, 결제, 예약, 상품권 발행 및 리뷰 게시 없음|Demo only · No real store, payment, booking, vouchers or public reviews|体験専用・実店舗、決済、予約、商品券発行、レビュー公開なし
 가상 이용 기능|Demo features|体験機能
 주문 내역|Order history|注文履歴
@@ -1228,7 +1348,7 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
 가상 기프트 잔액 사용|Use demo gift credit|体験ギフト残高を使用
 적립 수치와 가상 이용 기록은 이 브라우저에 저장되며 실제 혜택은 없습니다.|Rewards and demo activity stay in this browser and have no real value.|特典と体験履歴はブラウザー内に保存され、実際の価値はありません。
 실제 주문 접수·결제 없음 · 가상 주문 내역은 이 브라우저에만 저장됩니다.|No real order or payment · Demo history stays in this browser.|実注文・決済なし・体験履歴はブラウザー内のみ保存。
-가상 주문 시연 · 실제 개인정보를 입력하지 마세요. 자동 입력 버튼으로 예시를 사용하세요. 입력한 주문자 정보는 저장하지 않습니다.|Demo order · Do not enter real personal data. Use the sample fill button. Customer input is not stored.|体験注文・実個人情報を入力せず自動入力を使用してください。入力した注文者情報は保存しません。`;
+가상 정보 자동 입력을 이용하세요. 개인정보는 저장하지 않습니다.|Use fictional autofill. Personal information is not stored.|架空情報の自動入力をご利用ください。個人情報は保存しません。`;
   for(const line of xtranslations.split('\n')){const [ko,en,ja]=line.split('|');catalog.strings[ko]={en,ja};}
   Object.assign(catalog.strings,{
     '전체 메뉴':{en:'All menus',ja:'全メニュー'},'관리자 로그인':{en:'Admin login',ja:'管理者ログイン'},

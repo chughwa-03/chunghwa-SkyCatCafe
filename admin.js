@@ -1,4 +1,4 @@
-/* V30.2 Admin Studio — server auth or isolated portfolio demo access. */
+/* Admin Studio — server auth or isolated portfolio demo access. */
 (() => {
   'use strict';
   const S=globalThis.SkyCatStore,$=s=>document.querySelector(s);
@@ -54,8 +54,8 @@
   const button=(label,fn,cls='')=>{const b=el('button',cls,label);b.type='button';b.addEventListener('click',()=>{if(signedIn)fn();});return b;};
   const input=(type,value='',min,max)=>{const n=el('input');n.type=type;n.value=value;if(min!==undefined)n.min=min;if(max!==undefined)n.max=max;return n;};
   function select(values,initial){const n=el('select');for(const [v,t] of values){const o=el('option','',t);o.value=v;n.append(o);}if(initial!==undefined)n.value=String(initial);else if(values.length)n.value=String(values[0][0]);return n;}
-  const label=(caption,control)=>{const l=el('label','field',caption);l.append(control);return l;};
-  const actions=(...nodes)=>{const d=el('div','actions');d.append(...nodes);return d;};
+  const label=(caption,control)=>{const l=el('label','field sc-field',caption);l.append(control);return l;};
+  const actions=(...nodes)=>{const d=el('div','actions sc-actions');d.append(...nodes);return d;};
   const hint=text=>el('p','hint',text);
   const pill=(text,cls='')=>el('span','tag '+cls,text);
   const empty=text=>el('div','empty',text);
@@ -99,7 +99,7 @@
     const todayBookings=bookings().filter(r=>r.date===today&&r.status!=='cancelled');
     const goodOrders=goods.history().filter(o=>o.status!=='cancelled'&&S.day(Date.parse(o.date))===today);
     const goodsRev=goodOrders.reduce((sum,o)=>sum+o.total,0);
-    const welcome=el('section','dashboard-welcome'),intro=el('div');intro.append(el('span','eyebrow','TODAY AT SKY CAT'),el('h2','','오늘의 카페 운영 현황'),el('p','','예약부터 주문까지, 필요한 업무를 바로 확인하세요.'));welcome.append(intro,el('span','welcome-date',today+' · KST'));
+    const welcome=el('section','dashboard-welcome'),intro=el('div');intro.append(el('span','eyebrow','TODAY AT SKY CAT'),el('h2','','운영 현황'),el('p','','예약, 주문, 문의 현황'));welcome.append(intro,el('span','welcome-date',today+' · KST'));
     const tasks=el('div','task-list');for(const [id,label,count,desc] of [['status','진행 중 주문',activeOrders().filter(o=>o.step<3).length,'접수 및 제조 상태를 확인합니다.'],['reservations','승인 대기 예약',bookings().filter(r=>r.status==='pending').length,'방문 일정과 좌석을 확인합니다.'],['inquiries','미답변 문의',exp.inquiries.filter(q=>!q.reply).length,'고객 문의에 답변합니다.'],['stock','품절 메뉴',menus.filter(m=>!m.archived&&!S.available(m.id,conf,exp)).length,'판매 상태를 확인합니다.']]){const card=button('',()=>{location.hash=id;},'task-card'+(count?' has-work':''));card.append(el('span','',label),el('b','',count+(id==='stock'?'종':'건')+' ›'),el('small','',desc));tasks.append(card);}
     const analysis=el('div','dashboard-grid');analysis.append(panel('최근 7일 통합 가상 주문액',hint('카페 + 굿즈 · 취소 제외 · 한국 시간 기준'),chart(salesRows('day').map(x=>[x.label,x.total,money(x.total)]))),panel('처리해야 할 업무',hint('항목을 선택하면 해당 관리 화면으로 이동합니다.'),tasks));
     const quick=el('div','quick-links');for(const [id,label] of [['orders','주문 내역 ↗'],['price','가격 관리 ↗'],['reservations','예약 관리 ↗'],['notices','공지 등록 ↗']])quick.append(button(label,()=>{location.hash=id;}));
@@ -296,7 +296,7 @@
       cancel.disabled=!['received','packing'].includes(o.status);
       return [o.id+'\n'+datetime(Date.parse(o.date)),o.items.map(i=>i.name+' × '+i.quantity+' · '+money(i.price)).join('\n'),money(o.total),pill(G.statuses[o.status],o.status==='cancelled'?'bad':o.status==='delivered'?'':'blue'),actions(advance,cancel)];
     });
-    return panel('굿즈 주문 · 배송 관리',hint('주문 접수 → 상품 준비 중 → 배송 중 → 배송 완료. 접수/준비 중 취소 가능. V23까지의 기존 주문은 이전 재고 차감 기록이 없어 취소 시 재고를 복구하지 않습니다. 실제 결제 및 배송 없음.'),table(['주문번호 / 시간','주문 상품 및 단가','주문액','상태','관리'],rows));
+    return panel('굿즈 주문 · 배송 관리',hint('접수·준비 중인 주문은 취소할 수 있습니다. 재고 차감 기록이 없는 과거 주문은 취소해도 재고가 복구되지 않습니다. 실제 결제 및 배송 없음.'),table(['주문번호 / 시간','주문 상품 및 단가','주문액','상태','관리'],rows));
   }
   const cloudKinds={cafe:'카페 주문',goods:'굿즈 주문',reservation:'예약',inquiry:'고객 문의'};
   const cloudStates={received:'접수',processing:'처리 중',completed:'처리 완료',cancelled:'취소'};
@@ -342,7 +342,7 @@
     $('#content').replaceChildren(...nodes);
   }
   function route(){const id=location.hash.slice(1);active=Object.hasOwn(renderers,id)?id:authMode==='demo'?'dashboard':'cloud';filter='';render();setNav(false);}
-  function setNav(open){navOpen=open;$('#sidebar').classList.toggle('is-open',open);$('#nav-scrim').hidden=!open;$('#nav-toggle').setAttribute('aria-expanded',String(open));$('#nav-toggle').setAttribute('aria-label',open?'관리자 메뉴 닫기':'관리자 메뉴 열기');$('#nav-toggle').textContent=open?'×':'☰';}
+  function setNav(open){navOpen=open;$('#sidebar').classList.toggle('is-open',open);$('#nav-scrim').hidden=!open;$('#nav-toggle').setAttribute('aria-expanded',String(open));$('#nav-toggle').setAttribute('aria-label',open?'관리자 메뉴 닫기':'관리자 메뉴 열기');$('#nav-toggle').classList.toggle('sc-close',open);$('#nav-toggle').textContent=open?'×':'☰';}
   function filterNav(){const query=$('#nav-search').value.trim().toLowerCase();let count=0;for(const entry of navEntries){entry.link.hidden=!!query&&!entry.text.includes(query);if(!entry.link.hidden)count++;}for(const g of navGroups)g.title.hidden=g.entries.every(x=>x.link.hidden);$('#nav-count').textContent=String(count);$('#nav-empty').hidden=count!==0;}
   function buildNav(){const nav=$('#nav'),groups=[...new Set(sections.map(x=>x[2]))];for(const group of groups){const g={title:el('p','nav-group',group),entries:[]};navGroups.push(g);nav.append(g.title);for(const [id,title] of sections.filter(x=>x[2]===group)){const a=el('a','nav-link'),badge=el('span','nav-badge');badge.hidden=true;a.href='#'+id;a.append(el('span','nav-no',String(sections.findIndex(x=>x[0]===id)+1).padStart(2,'0')),el('strong','',title),badge);a.addEventListener('click',()=>{setNav(false);});const entry={id,link:a,badge,text:(title+' '+group+' '+id).toLowerCase()};navEntries.push(entry);g.entries.push(entry);nav.append(a);}}filterNav();}
   function toggle(){ $('#login').hidden=signedIn;$('#workspace').hidden=!signedIn;$('#auth-mode-label').textContent=authMode==='demo'?(publicDemoOrigin()?'공개 시연 모드':'로컬 테스트 모드'):'관리자 인증';$('#admin-brand-home').href=authMode==='demo'?'#dashboard':'#cloud';if(signedIn)route();else $('#content').replaceChildren();}

@@ -1,0 +1,32 @@
+/* Page-specific positioning; shared geometry lives in skycat-components.css. */
+.welcome-note { align-items: center; gap: var(--sc-space-3); }
+.welcome-note button.sc-close { margin-left: auto; }
+.dialog-header.sc-dialog-head { gap: var(--sc-space-3); }
+.goods-page .dialog-body {
+  padding-top: calc(var(--sc-close-size) + var(--sc-space-3));
+  gap: var(--sc-space-4);
+}
+.goods-page .dialog-body > div { padding-top: 0; }
+.goods-page .dialog-body .close { top: 0; right: 0; }
+.goods-page .cart-head.sc-dialog-head { gap: var(--sc-space-3); }
+.goods-page .cart-head h2 { margin: 0; }
+.goods-page .dialog-actions.sc-actions,
+.goods-page .cart-footer.sc-actions { gap: var(--sc-space-2); }
+@media (max-width: 710px) {
+  #full-menu .selection-toolbar { gap: var(--sc-space-2); }
+  #full-menu .selection-toolbar strong { order: 0; flex: 1 1 calc(100% - 52px); width: auto; }
+  #full-menu .selection-toolbar .selection-close { order: 1; margin-left: 0; }
+  #full-menu .selection-toolbar .selection-back { order: 2; margin-right: auto; }
+  .order-payment-roof { padding-right: 64px; }
+}
+.photo-dialog .zoom-close { margin-bottom: var(--sc-space-2); }
+.sc-close.nav-toggle { position: relative; }
+.sc-close.nav-close { display: none; }
+@media (max-width: 740px) {
+  .sc-close.nav-close { display: grid; }
+}
+.login-field.sc-field, .login-card label.sc-field { gap: var(--sc-space-2); }
+.top-meta.sc-actions { gap: var(--sc-space-2); }
+@media (max-width: 740px) {
+  .nav-toggle { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+}
