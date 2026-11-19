@@ -230,6 +230,178 @@ html:not([lang=ko]) .goods-page .product-info h3,html:not([lang=ko]) .goods-page
 .goods-page :where(.product-photo,.goods-favorite,.goods-add,.goods-buy,.detail-btn):focus-visible { box-shadow:0 0 0 5px #e0f3ff; }
 .goods-page :where(button,input,select):disabled { cursor:not-allowed; opacity:.58; }
 .goods-page .product-photo img { max-width:100%; object-fit:contain; }
+
+/* Product display stages — shared by the catalog and the detail dialog. */
+.goods-page :where(.product-card, #product-dialog) {
+  --stage-edge: #b8ddf5;
+  --stage-mid: #dcefff;
+  --stage-glow: #f2faff;
+  --stage-pattern: radial-gradient(circle, #fff9 1.5px, transparent 1.6px);
+  --stage-pattern-size: 18px 18px;
+  --stage-image-size: 85%;
+  --stage-motif-size: 17%;
+  --stage-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 88'%3E%3Cpath fill='%23fff9e0' stroke='%23b49a58' stroke-width='1.7' d='M27 4l5 13 13 5-13 5-5 13-5-13-13-5 13-5zM65 45l4 10 10 4-10 4-4 10-4-10-10-4 10-4z'/%3E%3Ccircle cx='15' cy='61' r='4' fill='%23fff' opacity='.85'/%3E%3C/svg%3E");
+}
+
+/* Four mascot moods: coffee, heart, clouds, and dreamy evening. */
+.goods-page :where(.product-card, #product-dialog)[data-sku$="-02"] {
+  --stage-edge: #f4d8e7;
+  --stage-mid: #e9eefb;
+  --stage-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 88'%3E%3Cpath d='M32 39C24 31 10 23 10 13 10 1 25 0 32 12 39 0 54 1 54 13 54 23 40 31 32 39z' fill='%23ffe0eb' stroke='%23c58da8' stroke-width='2'/%3E%3Cpath d='M68 75C64 71 56 67 56 61 56 54 64 54 68 60 72 54 80 54 80 61 80 67 72 71 68 75z' fill='%23fff' stroke='%23d5aec4' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku$="-03"] {
+  --stage-edge: #c3e8f9;
+  --stage-mid: #e1f3fc;
+  --stage-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 88'%3E%3Cpath d='M7 29c0-6 5-11 11-11 2-8 9-12 16-12 9 0 16 6 17 14 8 0 12 5 12 11 0 7-5 11-12 11H19C12 42 7 37 7 29z' fill='%23fff' stroke='%238dbfda' stroke-width='2'/%3E%3Cpath d='M46 65c0-4 4-8 8-8 2-5 7-8 12-8 6 0 10 4 12 9 6 0 8 4 8 8 0 5-4 8-9 8H56c-6 0-10-4-10-9z' fill='%23fff' opacity='.85'/%3E%3C/svg%3E");
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku$="-04"] {
+  --stage-edge: #d9d9f5;
+  --stage-mid: #e5edfc;
+  --stage-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 88'%3E%3Cpath d='M38 6c-14 2-23 12-23 25 0 15 13 27 28 27 11 0 20-6 25-15-12 4-24-2-30-12-5-9-5-17 0-25z' fill='%23fff3c9' stroke='%23b8a366' stroke-width='2'/%3E%3Cpath d='M72 11l3 8 8 3-8 3-3 8-3-8-8-3 8-3zM10 61l3 6 6 3-6 3-3 6-3-6-6-3 6-3z' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+/* Category textures give each collection its own display surface. */
+.goods-page :where(.product-card, #product-dialog)[data-sku^="mug-"] {
+  --stage-pattern: repeating-linear-gradient(120deg, #ffffff45 0 1px, transparent 1px 14px);
+  --stage-pattern-size: auto;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="tumbler-"] {
+  --stage-pattern: repeating-linear-gradient(90deg, #ffffff63 0 2px, transparent 2px 25px);
+  --stage-pattern-size: auto;
+  --stage-image-size: 89%;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="coaster-"] {
+  --stage-pattern: repeating-radial-gradient(circle at center, transparent 0 20px, #ffffff59 21px 22px, transparent 23px 40px);
+  --stage-pattern-size: auto;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="lamp-"] {
+  --stage-pattern: radial-gradient(circle, #fffdf0b5 1.5px, transparent 2px);
+  --stage-pattern-size: 23px 23px;
+  --stage-glow: #f9f6ee;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="plush-"] {
+  --stage-pattern: radial-gradient(circle, #ffffff82 3px, transparent 3.5px);
+  --stage-pattern-size: 27px 27px;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="plush-keyring-"] {
+  --stage-pattern: radial-gradient(circle, #fff9 2px, transparent 2.6px);
+  --stage-pattern-size: 14px 14px;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="acrylic-keyring-"] {
+  --stage-pattern: repeating-linear-gradient(45deg, transparent 0 28px, #ffffff6b 28px 30px, transparent 30px 56px);
+  --stage-pattern-size: auto;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="stand-"] {
+  --stage-pattern: repeating-linear-gradient(135deg, #ffffff52 0 2px, transparent 2px 20px);
+  --stage-pattern-size: auto;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="stickers-"] {
+  --stage-pattern: radial-gradient(circle, #ffffff9c 1.5px, transparent 1.6px);
+  --stage-pattern-size: 12px 12px;
+  --stage-motif-size: 13%;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="postcard-"] {
+  --stage-pattern: linear-gradient(90deg, #ffffff43 1px, transparent 1px), linear-gradient(#ffffff43 1px, transparent 1px);
+  --stage-pattern-size: 20px 20px, 20px 20px;
+  --stage-motif-size: 13%;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="bag-"] {
+  --stage-pattern: repeating-linear-gradient(45deg, #ffffff42 0 3px, transparent 3px 9px);
+  --stage-pattern-size: auto;
+  --stage-glow: #f9f7ec;
+  --stage-motif-size: 13%;
+}
+.goods-page :where(.product-card, #product-dialog)[data-sku^="keycap-"] {
+  --stage-mid: #f0f3f7;
+  --stage-glow: #fff;
+  --stage-pattern: linear-gradient(90deg, #ffffff84 1px, transparent 1px), linear-gradient(#ffffff84 1px, transparent 1px);
+  --stage-pattern-size: 24px 24px, 24px 24px;
+  --stage-image-size: 89%;
+}
+.goods-page :where(.product-card, #product-dialog):is([data-sku^="keyboard-"], [data-sku^="mouse-"], [data-sku^="bundle-"]) {
+  --stage-edge: #9ecbe9;
+  --stage-mid: #d7eafa;
+  --stage-pattern: linear-gradient(90deg, #ffffff6b 1px, transparent 1px), linear-gradient(#ffffff6b 1px, transparent 1px);
+  --stage-pattern-size: 29px 29px, 29px 29px;
+  --stage-image-size: 92%;
+}
+
+.goods-page .product-photo.food,
+.goods-page .dialog-product-stage {
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 16px;
+  background-color: var(--stage-edge, #c6e4f9);
+  background-image: var(--stage-pattern), radial-gradient(ellipse at 50% 48%, var(--stage-glow) 0%, var(--stage-mid) 58%, var(--stage-edge) 100%);
+  background-size: var(--stage-pattern-size), cover;
+  box-shadow: inset 0 0 0 1px #ffffff9c;
+}
+
+.goods-page :is(.product-photo.food, .dialog-product-stage)::before,
+.goods-page :is(.product-photo.food, .dialog-product-stage)::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: var(--stage-motif-size);
+  aspect-ratio: 1;
+  background: var(--stage-motif) center / contain no-repeat;
+  pointer-events: none;
+}
+.goods-page :is(.product-photo.food, .dialog-product-stage)::before {
+  left: 1.5%;
+  top: 1.5%;
+}
+.goods-page :is(.product-photo.food, .dialog-product-stage)::after {
+  left: 1.5%;
+  bottom: 1.5%;
+  transform: rotate(-90deg);
+  opacity: .7;
+}
+
+.goods-page .product-photo.food img,
+.goods-page .dialog-product-stage #dialog-image {
+  position: relative;
+  display: block;
+  z-index: 1;
+  width: var(--stage-image-size);
+  height: var(--stage-image-size);
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  border-radius: 10px;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+}
+
+/* The source photographs are opaque. Soften only their outermost edges
+   so the pastel stage remains visible without altering the merchandise. */
+@supports (mask-composite: intersect) {
+  .goods-page .product-photo.food img,
+  .goods-page .dialog-product-stage #dialog-image {
+    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent),
+                linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
+    mask-composite: intersect;
+  }
+}
+.goods-page .product-photo.food .zoom-mark { z-index: 3; }
+.goods-page .dialog-product-stage { align-self: center; justify-self: center; }
+@media (max-width: 710px) {
+  .goods-page .dialog-product-stage { width: min(100%, 44vh); }
+}
+@media (max-width: 420px) {
+  .goods-page .product-photo.food img {
+    width: max(87%, var(--stage-image-size));
+    height: max(87%, var(--stage-image-size));
+  }
+}
 .goods-page .goods-floating-actions { max-width:calc(100% - 24px); }
 @media(max-width:560px) {
  .goods-page :where(.product-actions,.dialog-actions) { gap:8px; }

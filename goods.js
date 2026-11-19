@@ -315,6 +315,7 @@
     if (!productImage) return;
     lastFocus = button;
     selectedSku = button.closest('.product-card').dataset.sku;
+    dialog.dataset.sku = selectedSku;
     photo.src = productImage.getAttribute('src');
     photo.alt = button.dataset.name;
     updateDetail();
