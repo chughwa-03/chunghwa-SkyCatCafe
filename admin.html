@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   <title>하늘고양이카페 · 관리자</title>
   <link rel="icon" type="image/png" href="./skycat-mascot.png">
   <link rel="stylesheet" href="./admin.css">
@@ -12,7 +13,10 @@
   <script defer src="./goods-commerce.js"></script>
   <link rel="stylesheet" href="./skycat-email.css">
   <script defer src="./emailjs-config.js"></script>
+  <script defer src="./supabase-config.js"></script>
+  <script defer src="./skycat-cloud.js"></script>
   <script defer src="./skycat-email.js"></script>
+  <script defer src="./admin-test-config.js"></script>
   <script defer src="./admin.js"></script>
 </head>
 <body>
@@ -20,31 +24,31 @@
   <section id="login" class="login-wrap">
     <div class="login-card">
       <div class="login-brand"><div class="logo-icon" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="58" height="58" decoding="async"></div><div><strong>SKY CAT CAFE</strong><small>MANAGEMENT STUDIO</small></div></div>
-      <p class="eyebrow">ADMIN WORKSPACE · V27</p>
+      <p class="eyebrow">ADMIN WORKSPACE · V30.1</p>
       <h1>반가워요, 관리자님.</h1>
-      <p class="login-desc">오늘도 포근한 카페 운영을 시작해 볼까요?</p>
+      <p class="login-desc" id="login-desc">등록된 관리자 계정으로 로그인해 주세요.</p>
       <form id="login-form">
-        <label>관리자 ID<input id="admin-id" autocomplete="off" required value="admin"></label>
-        <div class="login-field"><label for="admin-pass">시연 비밀번호</label><div class="password-field"><input id="admin-pass" type="password" autocomplete="off" placeholder="시연 비밀번호 입력" required><button id="password-toggle" type="button" aria-pressed="false" aria-label="비밀번호 표시">보기</button></div></div>
-        <button type="submit" class="primary">관리자 체험 시작</button>
+        <label>관리자 이메일<input id="admin-id" type="email" autocomplete="username" placeholder="등록한 관리자 이메일" required></label>
+        <div class="login-field"><label for="admin-pass">비밀번호</label><div class="password-field"><input id="admin-pass" type="password" autocomplete="current-password" placeholder="비밀번호 입력" required><button id="password-toggle" type="button" aria-pressed="false" aria-label="비밀번호 표시">보기</button></div></div>
+        <button id="login-submit" type="submit" class="primary" disabled>관리자 로그인</button>
         <p id="login-error" role="alert"></p>
       </form>
-      <div class="notice"><strong>포트폴리오 체험 계정</strong><p>ID: <b>admin</b> · PW: <b>skycat2026</b></p><button id="demo-fill" type="button">시연 계정 자동 입력</button><small>실제 인증·결제·서버 없이 브라우저에서만 작동합니다.</small></div>
+      <div class="notice"><strong id="login-mode-title">관리자 전용 공간</strong><p id="login-mode-desc">Supabase 계정 인증 및 관리자 권한 확인 후 접속할 수 있습니다.</p><small id="cloud-login-notice">연결 상태 확인 중…</small></div>
       <a class="login-back" href="./index(order).html">← 고객 홈페이지로 돌아가기</a>
     </div>
   </section>
   <div id="workspace" hidden>
     <button id="nav-scrim" class="nav-scrim" aria-label="관리자 메뉴 닫기" type="button" hidden></button>
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#dashboard"><span class="paw" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="44" height="44" decoding="async"></span><div><strong>SKY CAT</strong><small>CAFE / ADMIN STUDIO</small></div></a>
-      <div class="sidebar-head"><span>관리자 메뉴 <span id="nav-count" class="nav-count">23</span></span><button id="nav-close" class="nav-close" type="button" aria-label="관리자 메뉴 닫기">×</button></div>
+      <a class="brand" href="#cloud"><span class="paw" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="44" height="44" decoding="async"></span><div><strong>SKY CAT</strong><small>CAFE / ADMIN STUDIO</small></div></a>
+      <div class="sidebar-head"><span>관리자 메뉴 <span id="nav-count" class="nav-count">24</span></span><button id="nav-close" class="nav-close" type="button" aria-label="관리자 메뉴 닫기">×</button></div>
       <label class="nav-search"><span aria-hidden="true">⌕</span><input id="nav-search" type="search" placeholder="메뉴 검색" aria-label="관리자 기능 검색" autocomplete="off"></label>
       <nav id="nav" aria-label="관리자 기능"></nav>
       <p id="nav-empty" class="nav-empty" hidden>해당 기능이 없습니다.</p>
       <div class="sidebar-footer"><div class="admin-profile"><span class="avatar">SC</span><div><strong>카페 관리자</strong><small>포트폴리오 운영 계정</small></div></div><a class="back" href="./index(order).html">↗ 고객 홈페이지</a><button id="logout">로그아웃</button></div>
     </aside>
     <main id="main" tabindex="-1">
-      <header class="topbar"><div class="heading"><div class="heading-row"><button id="nav-toggle" class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="관리자 메뉴 열기">☰</button><span class="eyebrow" id="breadcrumb">관리자 / 운영 현황</span></div><h1 id="title">대시보드</h1><p id="section-desc" class="section-desc"></p></div><div class="top-meta"><span class="live"><span></span> 로컬 시연</span><button id="refresh-view" type="button" class="refresh-btn" title="최신 운영 정보 불러오기">↻ 새로고침</button><a class="customer-link" href="./index(order).html" target="_blank" rel="noopener">고객 화면 ↗</a></div></header>
+      <header class="topbar"><div class="heading"><div class="heading-row"><button id="nav-toggle" class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="관리자 메뉴 열기">☰</button><span class="eyebrow" id="breadcrumb">관리자 / 운영 현황</span></div><h1 id="title">대시보드</h1><p id="section-desc" class="section-desc"></p></div><div class="top-meta"><span class="live"><span></span> <span id="auth-mode-label">관리자 인증</span></span><button id="refresh-view" type="button" class="refresh-btn" title="최신 운영 정보 불러오기">↻ 새로고침</button><a class="customer-link" href="./index(order).html" target="_blank" rel="noopener">고객 화면 ↗</a></div></header>
       <div id="notification" role="status" aria-live="polite"></div>
       <div id="content"></div>
       <footer>© 2026 Sky Cat Cafe · 관리자 운영 체험 · 실제 금전 거래 없음</footer>

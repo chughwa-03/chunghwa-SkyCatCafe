@@ -104,3 +104,5 @@ body { font-synthesis:none; font-variant-numeric:tabular-nums; }
  html { scroll-behavior:auto!important; }
  :where(.primary,.refresh-btn,.customer-link,.quick-links button,.task-card) { transition:none!important; }
 }
+.cloud-local-banner{margin:0 0 16px;padding:12px 16px;border:1px solid #c9e2f2;background:#eaf7ff;border-radius:12px;color:#315c78;font-size:13px;font-weight:700}
+.cloud-detail{min-width:170px;max-width:420px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.6}

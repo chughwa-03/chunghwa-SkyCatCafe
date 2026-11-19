@@ -71,6 +71,7 @@ bundle-01|Sky Cat Desk Duo Set|空猫デスクデュオセット`;
 오시는 길|Visit|アクセス
 공식 홈페이지|Official website|公式サイト
 브랜드 소개|Brand introduction|ブランド紹介
+관리자 로그인|Administrator login|管理者ログイン
 언어 선택|Select language|言語を選択
 하늘처럼 포근한|As cozy as the sky|空のようにやさしい
 하늘고양이 굿즈샵|Sky Cat Goods Shop|空猫グッズショップ

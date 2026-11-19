@@ -1,4 +1,4 @@
-/* Sky Cat Cafe V12 Admin Studio. Front-end portfolio demonstration, not real authorization. */
+/* V30.1 Admin Studio — server auth or local-only test access. */
 (() => {
   'use strict';
   const S=globalThis.SkyCatStore,$=s=>document.querySelector(s);
@@ -13,6 +13,7 @@
   const topics={taste:'메뉴 맛',space:'공간 분위기',kindness:'서비스',cats:'고양이 교감'};
   const week=['일','월','화','수','목','금','토'];
   const sections=[
+    ['cloud','공용 접수 대시보드','Supabase 공용 데이터'],
     ['dashboard','관리자 대시보드','운영 현황'],['orders','주문 관리','운영 현황'],['status','주문 상태 관리','운영 현황'],
     ['menu','메뉴 관리','상품 운영'],['stock','품절 관리','상품 운영'],['price','가격 관리','상품 운영'],
     ['reservations','예약 관리','방문 운영'],['seats','좌석 관리','방문 운영'],['sales','매출 통계','통계'],
@@ -24,12 +25,17 @@
   ];
   const descriptions={dashboard:'오늘의 주문과 예약, 운영 현황을 한눈에 확인하세요.',orders:'접수된 가상 주문의 내역과 취소 상태를 확인하세요.',status:'접수부터 수령까지 주문 진행 단계를 관리하세요.',menu:'메뉴의 이름과 분류, 가격, 설명 및 표시 상태를 편집하세요.',stock:'판매 중지 및 재판매 여부를 관리하세요.',price:'고객 화면과 연동되는 메뉴 가격을 변경하세요.',reservations:'방문 예약을 확인하고 승인 또는 변경하세요.',seats:'창가석과 테이블석의 이용 가능 상태를 관리하세요.',sales:'기간별 가상 주문 금액과 주문 건수를 확인하세요.',bundles:'음료와 디저트 세트 조합 및 할인 금액을 관리하세요.',member:'스탬프, 쿠폰 수치와 적립 내역을 확인하세요.',gifts:'가상 기프트 코드를 발행하고 사용 상태를 확인하세요.',notices:'고객 화면에 표시할 카페 소식을 관리하세요.',inquiries:'접수된 고객 문의를 확인하고 답변하세요.',reviews:'방문 후기를 확인하고 표시 여부를 관리하세요.',satisfaction:'별점 및 만족 분야별 통계를 확인하세요.',hours:'영업시간과 정기 휴무일을 설정하세요.',inventory:'상품 수량과 원재료 재고를 관리하세요.',crowd:'자동 또는 수동으로 매장 혼잡도를 설정하세요.',faq:'자주 묻는 질문을 등록하고 수정하세요.'};
   Object.assign(descriptions,{'goods-products':globalThis.SkyCatGoodsCatalog.length+'종 굿즈 이름, 가격 및 판매 여부를 관리합니다.','goods-stock':'굿즈 재고를 조정하고 품절 및 판매 상태를 확인합니다.','goods-orders':'굿즈 주문 접수, 상품 준비, 배송 및 취소를 관리합니다.'});
-  let conf,exp,member,menus,active='dashboard',period='day',filter='',goodsRevision=0;
+  descriptions.cloud='다른 기기에서 접수된 카페·굿즈·예약·문의를 확인하고 처리 상태를 변경합니다.';
+  let conf,exp,member,menus,active='cloud',period='day',filter='',goodsRevision=0;
   const navEntries=[],navGroups=[],tableQueries=new Map();
   let navOpen=false,baseline='',dirty=false;
-  const auth=()=>{try{return sessionStorage.getItem('skycat:admin:demo')==='yes';}catch{return false;}};
-  const setAuth=v=>{try{if(v)sessionStorage.setItem('skycat:admin:demo','yes');else sessionStorage.removeItem('skycat:admin:demo');}catch{}};
-  let signedIn=auth();
+  const cloud=globalThis.SkyCatCloud;
+  const demo=globalThis.SkyCatAdminTestConfig||{};
+  const localOrigin=()=>(location.protocol==='file:'&&!location.hostname)||(['http:','https:'].includes(location.protocol)&&['localhost','127.0.0.1','[::1]','::1'].includes(location.hostname));
+  const demoUsable=()=>demo.enabled===true&&typeof demo.email==='string'&&!!demo.email.trim()&&typeof demo.password==='string'&&!!demo.password&&!globalThis.SkyCatCloudConfig?.enabled&&!cloud?.usable()&&localOrigin();
+  const canLogin=()=>!!cloud?.usable()||demoUsable();
+  let authMode=null;
+  let signedIn=false,authBusy=false,cloudBusy=false,cloudEpoch=0,cloudFilter='all';
   const snapshot=()=>JSON.stringify([S.config(),S.experience(),S.member(),goods.revision()]);
   const reloadData=()=>{conf=S.config();exp=S.experience();member=S.member();menus=S.allMenus(conf);goodsRevision=goods.revision();baseline=JSON.stringify([conf,exp,member,goodsRevision]);dirty=false;};
   const name=id=>menus.find(m=>m.id===id)?.name||id;
@@ -291,28 +297,71 @@
     });
     return panel('굿즈 주문 · 배송 관리',hint('주문 접수 → 상품 준비 중 → 배송 중 → 배송 완료. 접수/준비 중 취소 가능. V23까지의 기존 주문은 이전 재고 차감 기록이 없어 취소 시 재고를 복구하지 않습니다. 실제 결제 및 배송 없음.'),table(['주문번호 / 시간','주문 상품 및 단가','주문액','상태','관리'],rows));
   }
-  const renderers={dashboard,orders:()=>orderTable(false),status:()=>orderTable(true),menu:menuEditor,stock:stockManager,price:priceManager,reservations:reservationManager,seats:seatManager,sales:salesManager,bundles:bundleManager,member:memberManager,gifts:giftsManager,notices:()=>textManager('notices','공지사항'),inquiries:inquiryManager,reviews:reviewsManager,satisfaction:reviewStats,hours:hoursManager,inventory:inventoryManager,crowd:crowdManager,faq:()=>textManager('faq','FAQ'),'goods-products':goodsProductManager,'goods-stock':goodsStockManager,'goods-orders':goodsOrderManager};
+  const cloudKinds={cafe:'카페 주문',goods:'굿즈 주문',reservation:'예약',inquiry:'고객 문의'};
+  const cloudStates={received:'접수',processing:'처리 중',completed:'처리 완료',cancelled:'취소'};
+  function cloudDashboard(){
+    if(authMode==='demo')return panel('공용 접수 · 연결 보류',hint('로컬 테스트 로그인에서는 공용 데이터베이스에 연결하지 않습니다.'),hint('같은 브라우저의 주문·예약·문의 등은 각 로컬 관리 메뉴에서 검사하세요. Supabase 연결 후에만 다른 기기의 접수를 확인할 수 있습니다.'));
+    const root=el('div');root.id='cloud-inbox';root.append(hint('공용 접수 기록을 불러오는 중…'));
+    const p=panel('통합 공용 접수',hint('다른 기기의 시연 접수 내역 · 최근 200건 · 실제 거래 및 매장 예약 아님'),hint('접수 내용과 금액은 방문자 브라우저에서 전송된 시연 데이터입니다. 기존 로컬 메뉴·재고 관리에는 영향을 주지 않습니다.'),root);
+    queueMicrotask(()=>loadCloud());return p;
+  }
+  async function loadCloud(){
+    const root=$('#cloud-inbox');if(!signedIn||authMode!=='cloud'||active!=='cloud'||!root||cloudBusy)return;
+    const epoch=cloudEpoch;cloudBusy=true;
+    try{
+      const rows=await cloud.listEvents();if(!Array.isArray(rows))throw Error('Invalid response');
+      if(!signedIn||epoch!==cloudEpoch||active!=='cloud'||root!==$('#cloud-inbox'))return;
+      const picker=select([['all','전체'],...Object.entries(cloudKinds)],cloudFilter);
+      picker.addEventListener('change',()=>{cloudFilter=picker.value;loadCloud();});
+      const filtered=rows.filter(r=>cloudFilter==='all'||r.kind===cloudFilter);
+      const counts=Object.keys(cloudKinds).map(k=>[cloudKinds[k],rows.filter(r=>r.kind===k).length+'건','접수 대기 '+rows.filter(r=>r.kind===k&&r.status==='received').length+'건']);
+      root.replaceChildren(cards(counts),actions(label('접수 유형',picker),button('서버 새로고침',()=>loadCloud())),hint('최근 갱신: '+datetime(Date.now())+' · 30초마다 갱신'),table(['접수 번호 / 시간','유형','내용','원화 기준 합계','처리 상태'],filtered.map(r=>{
+        const detail=el('div','cloud-detail',r.details),selectState=select(Object.entries(cloudStates),r.status);
+        const saveBtn=button('상태 저장',async()=>{
+          saveBtn.disabled=true;
+          try{await cloud.updateEvent(r.id,selectState.value);if(signedIn){message('공용 접수 상태를 저장했습니다.');await loadCloud();}}
+          catch{if(signedIn)message('상태 저장 실패 · 권한 또는 연결을 확인하세요.',true);}
+          finally{saveBtn.disabled=false;}
+        },'primary');
+        return [r.reference+'\n'+datetime(Date.parse(r.created_at)),cloudKinds[r.kind]||'—',detail,r.total_krw,actions(selectState,saveBtn)];
+      })));
+    }catch(e){
+      if(signedIn&&epoch===cloudEpoch){root.replaceChildren(hint('공용 접수 조회 실패. SQL 설정·계정 권한·네트워크를 확인하세요.'));
+        if(['NOT_ADMIN','NOT_AUTHENTICATED','HTTP_401','HTTP_403'].includes(e.code))lock('관리자 권한을 다시 확인해 주세요.');}
+    }finally{cloudBusy=false;if(signedIn&&active==='cloud'&&root!==$('#cloud-inbox'))queueMicrotask(loadCloud);}
+  }
+  const renderers={cloud:cloudDashboard,dashboard,orders:()=>orderTable(false),status:()=>orderTable(true),menu:menuEditor,stock:stockManager,price:priceManager,reservations:reservationManager,seats:seatManager,sales:salesManager,bundles:bundleManager,member:memberManager,gifts:giftsManager,notices:()=>textManager('notices','공지사항'),inquiries:inquiryManager,reviews:reviewsManager,satisfaction:reviewStats,hours:hoursManager,inventory:inventoryManager,crowd:crowdManager,faq:()=>textManager('faq','FAQ'),'goods-products':goodsProductManager,'goods-stock':goodsStockManager,'goods-orders':goodsOrderManager};
   function render(){
     if(!signedIn)return;reloadData();const current=sections.find(x=>x[0]===active)||sections[0];
     $('#title').textContent=current[1];$('#breadcrumb').textContent='관리자 / '+current[2];$('#section-desc').textContent=descriptions[current[0]];$('#notification').textContent='';
     const badges={status:activeOrders().filter(o=>o.step<3).length,reservations:bookings().filter(r=>r.status==='pending').length,inquiries:exp.inquiries.filter(q=>!q.reply).length,stock:menus.filter(m=>!m.archived&&!S.available(m.id,conf,exp)).length,'goods-orders':goods.history().filter(o=>['received','packing','shipping'].includes(o.status)).length,'goods-stock':goods.list().filter(p=>!p.available).length};
     for(const entry of navEntries){if(entry.id===active)entry.link.setAttribute('aria-current','page');else entry.link.removeAttribute('aria-current');const n=badges[entry.id]||0;entry.badge.textContent=String(n);entry.badge.hidden=!n;}
-    const view=renderers[active]();$('#content').replaceChildren(...(Array.isArray(view)?view:[view]));
+    const view=renderers[active]();const nodes=Array.isArray(view)?view:[view];
+    if(active!=='cloud')nodes.unshift(el('p','cloud-local-banner',authMode==='demo'?'로컬 체험 · 테스트 로그인 모드 · 현재 브라우저의 시연 데이터만 사용합니다.':'로컬 체험 관리 · 현재 브라우저의 시연 데이터만 사용합니다. 다른 기기의 접수는 공용 접수 대시보드에서 확인하세요.'));
+    $('#content').replaceChildren(...nodes);
   }
-  function route(){const id=location.hash.slice(1);active=Object.hasOwn(renderers,id)?id:'dashboard';filter='';render();setNav(false);}
+  function route(){const id=location.hash.slice(1);active=Object.hasOwn(renderers,id)?id:authMode==='demo'?'dashboard':'cloud';filter='';render();setNav(false);}
   function setNav(open){navOpen=open;$('#sidebar').classList.toggle('is-open',open);$('#nav-scrim').hidden=!open;$('#nav-toggle').setAttribute('aria-expanded',String(open));$('#nav-toggle').setAttribute('aria-label',open?'관리자 메뉴 닫기':'관리자 메뉴 열기');$('#nav-toggle').textContent=open?'×':'☰';}
   function filterNav(){const query=$('#nav-search').value.trim().toLowerCase();let count=0;for(const entry of navEntries){entry.link.hidden=!!query&&!entry.text.includes(query);if(!entry.link.hidden)count++;}for(const g of navGroups)g.title.hidden=g.entries.every(x=>x.link.hidden);$('#nav-count').textContent=String(count);$('#nav-empty').hidden=count!==0;}
   function buildNav(){const nav=$('#nav'),groups=[...new Set(sections.map(x=>x[2]))];for(const group of groups){const g={title:el('p','nav-group',group),entries:[]};navGroups.push(g);nav.append(g.title);for(const [id,title] of sections.filter(x=>x[2]===group)){const a=el('a','nav-link'),badge=el('span','nav-badge');badge.hidden=true;a.href='#'+id;a.append(el('span','nav-no',String(sections.findIndex(x=>x[0]===id)+1).padStart(2,'0')),el('strong','',title),badge);a.addEventListener('click',()=>{setNav(false);});const entry={id,link:a,badge,text:(title+' '+group+' '+id).toLowerCase()};navEntries.push(entry);g.entries.push(entry);nav.append(a);}}filterNav();}
-  function toggle(){ $('#login').hidden=signedIn;$('#workspace').hidden=!signedIn;if(signedIn)route();}
-  $('#login-form').addEventListener('submit',e=>{e.preventDefault();if($('#admin-id').value==='admin'&&$('#admin-pass').value==='skycat2026'){signedIn=true;setAuth(true);$('#admin-pass').value='';$('#login-error').textContent='';toggle();}else $('#login-error').textContent='시연 계정 또는 비밀번호가 일치하지 않습니다.';});
-  $('#logout').addEventListener('click',()=>{signedIn=false;setAuth(false);toggle();});
+  function toggle(){ $('#login').hidden=signedIn;$('#workspace').hidden=!signedIn;$('#auth-mode-label').textContent=authMode==='demo'?'로컬 테스트 모드':'관리자 인증';if(signedIn)route();else $('#content').replaceChildren();}
+  function lock(reason=''){const previous=authMode;signedIn=false;authMode=null;cloudEpoch++;$('#admin-pass').value='';$('#login-error').textContent=reason;toggle();if(previous==='cloud')cloud?.signOut();}
+  const loginError=e=>e.code==='NOT_ADMIN'?'관리자로 등록되지 않은 계정입니다.':e.code==='NOT_CONFIGURED'?'Supabase 설정 또는 HTTP(S) 실행 환경을 확인하세요.':'로그인 실패 · 이메일, 비밀번호, 관리자 등록 및 연결 상태를 확인하세요.';
+  $('#login-form').addEventListener('submit',async e=>{e.preventDefault();if(authBusy||!canLogin()||signedIn)return;authBusy=true;$('#login-submit').disabled=true;$('#login-error').textContent='인증 확인 중…';
+    try{const email=$('#admin-id').value.trim(),pass=$('#admin-pass').value;
+      if(demoUsable()){if(email.toLowerCase()!==demo.email.trim().toLowerCase()||pass!==demo.password)throw Object.assign(Error('Invalid test credentials'),{code:'TEST_DENIED'});authMode='demo';}
+      else{await cloud.signIn(email,pass);authMode='cloud';}
+      signedIn=true;cloudEpoch++;$('#login-error').textContent='';toggle();}
+    catch(e){signedIn=false;authMode=null;$('#login-error').textContent=e.code==='TEST_DENIED'?'테스트 이메일 또는 비밀번호가 일치하지 않습니다.':loginError(e);toggle();}
+    finally{$('#admin-pass').value='';authBusy=false;$('#login-submit').disabled=!canLogin();}
+  });
+  $('#logout').addEventListener('click',()=>lock());
   $('#nav-toggle').addEventListener('click',()=>{setNav(!navOpen);if(navOpen)$('#nav-search').focus();});
   for(const id of ['#nav-close','#nav-scrim'])$(id).addEventListener('click',()=>{setNav(false);$('#nav-toggle').focus();});
   window.addEventListener('keydown',e=>{if(navOpen&&e.key==='Escape'){setNav(false);$('#nav-toggle').focus();}});
   $('#nav-search').addEventListener('input',filterNav);
   $('#skip-link').addEventListener('click',e=>{e.preventDefault();(signedIn?$('#main'):$('#admin-id')).focus();});
-  $('#refresh-view').addEventListener('click',()=>{if(signedIn){render();message('최신 운영 정보를 불러왔습니다.');}});
-  $('#demo-fill').addEventListener('click',()=>{$('#admin-id').value='admin';$('#admin-pass').value='skycat2026';$('#admin-pass').focus();});
+  $('#refresh-view').addEventListener('click',()=>{if(signedIn){if(active==='cloud')loadCloud();else{render();message('최신 운영 정보를 불러왔습니다.');}}});
   $('#password-toggle').addEventListener('click',()=>{const p=$('#admin-pass'),show=p.type==='password';p.type=show?'text':'password';$('#password-toggle').textContent=show?'숨기기':'보기';$('#password-toggle').setAttribute('aria-pressed',String(show));$('#password-toggle').setAttribute('aria-label',show?'비밀번호 숨기기':'비밀번호 표시');});
   window.addEventListener('hashchange',route);
   const markDirty=e=>{const n=e.target;if(n&&['INPUT','SELECT','TEXTAREA'].includes(n.tagName)&&n.type!=='search'&&!n.readOnly&&!n.disabled)dirty=true;};
@@ -323,4 +372,21 @@
   window.addEventListener('skycat:mail-status',refreshMailPanel);
   window.addEventListener('pageshow',e=>{if(e.persisted)remoteRefresh();});
   buildNav();toggle();
+  async function restore(){
+    if(demoUsable()){
+      $('#login-desc').textContent='로컬 검수 전용 계정으로 로그인해 주세요.';
+      $('#login-mode-title').textContent='로컬 테스트 전용 · 실제 사용자 인증 아님';
+      $('#login-mode-desc').textContent='SQL 없이 같은 브라우저의 시연 기능을 검사합니다. 공개 사이트에서는 이 계정을 사용할 수 없습니다.';
+      $('#cloud-login-notice').textContent='테스트 계정: '+demo.email+' · 비밀번호는 admin-test-config.js에서 확인/변경하세요.';
+      $('#login-submit').disabled=false;return;
+    }
+    $('#cloud-login-notice').textContent=cloud?.usable()?'등록된 관리자만 인증할 수 있습니다.':localOrigin()?'연결 전 · supabase-config.js 또는 로컬 테스트 설정을 확인하세요.':'공개 주소에서는 테스트 로그인 불가 · Supabase 관리자 인증이 필요합니다.';
+    if(!cloud?.usable()){$('#login-submit').disabled=true;return;}
+    authBusy=true;try{if(await cloud.resume()){authMode='cloud';signedIn=true;cloudEpoch++;toggle();}}finally{authBusy=false;$('#login-submit').disabled=false;}
+  }
+  restore();
+  let checking=false;
+  async function periodic(){if(!signedIn||authMode!=='cloud'||checking||document.hidden)return;checking=true;try{await cloud.verify();if(active==='cloud'&&!cloudBusy&&!$('#cloud-inbox')?.contains(document.activeElement))await loadCloud();}catch{if(signedIn)lock('관리자 세션이 만료되었거나 인증 확인에 실패했습니다. 다시 로그인해 주세요.');}finally{checking=false;}}
+  setInterval(periodic,30000);
+  document.addEventListener('visibilitychange',periodic);
 })();

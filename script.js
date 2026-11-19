@@ -177,6 +177,7 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     reservation: ['Reservations & inquiries', '予約・お問い合わせ'],
     footer: ['Fictional cafe brand portfolio · no real business or payment', '架空のカフェブランド作品・実際の営業や決済はありません'],
     backHome: ['Back to top ↑', '最初に戻る ↑'],
+    adminLogin: ['Administrator login', '管理者ログイン'],
     top: ['Scroll to top', 'ページ上部へ'],
     close: ['Close photo', '写真を閉じる'],
     photoNote: ['Press Escape or the close button to close the photo.', 'Escキーまたは閉じるボタンで写真を閉じられます。'],

@@ -45,11 +45,14 @@
   function refresh(){
     for(const n of document.querySelectorAll('[data-mail-notice]')){
       n.textContent=localized(configured()?(n.dataset.mailNotice==='inquiry'?'inquiry':'ready'):'disabled');
+      if(globalThis.SkyCatCloud?.configured())n.textContent+=lang()==='en'?' Shared demo records are also sent to the administrator database. Do not enter personal information.':lang()==='ja'?' 体験記録は管理者用データベースにも送信されます。個人情報は入力しないでください。':' 가상 기록은 관리자용 데이터베이스에도 전송됩니다. 개인정보는 입력하지 마세요.';
     }
     for(const n of document.querySelectorAll('[data-mail-status]')){
       const row=history().find(r=>r.key===n.dataset.mailStatus);
-      n.hidden=!row;
-      n.textContent=row?localized(row.status):'';
+      const split=n.dataset.mailStatus.indexOf(':'),kind=n.dataset.mailStatus.slice(0,split),ref=n.dataset.mailStatus.slice(split+1);
+      const cloud=globalThis.SkyCatCloud,cloudText=cloud?.textFor(cloud.status(kind,ref),lang())||'';
+      n.hidden=!row&&!cloudText;
+      n.textContent=[row?localized(row.status):'',cloudText].filter(Boolean).join(' / ');
       n.dataset.state=row?.status||'';
     }
   }
@@ -109,9 +112,10 @@
     const previous=result(kind,eventRef);
     if(previous)return Promise.resolve(previous); // never auto-resend an existing event
     if(!saved)return Promise.resolve(put(kind,ref,eventRef,'local-error'));
+    const params=build(kind,record,lang());
+    globalThis.SkyCatCloud?.submit(kind,eventRef,params);
     if(!configured())return Promise.resolve(put(kind,ref,eventRef,'disabled'));
     if(!['http:','https:'].includes(location.protocol))return Promise.resolve(put(kind,ref,eventRef,'serve'));
-    const params=build(kind,record,lang());
     put(kind,ref,eventRef,'queued');
     const task=queue.then(()=>sendRequest(kind,ref,eventRef,params));
     queue=task.catch(()=>put(kind,ref,eventRef,'uncertain'));
@@ -119,6 +123,7 @@
   }
   globalThis.SkyCatEmail=Object.freeze({KEY,configured,notify,notice,bind,refresh,history,labels,reservationRef});
   globalThis.addEventListener('storage',e=>{if(e.key===KEY||e.key===null)refresh();});
+  globalThis.addEventListener('skycat:cloud-status',refresh);
   if(typeof MutationObserver==='function')new MutationObserver(refresh).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   refresh();
 })();

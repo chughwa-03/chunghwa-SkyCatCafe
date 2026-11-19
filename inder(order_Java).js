@@ -1231,7 +1231,7 @@ HTML·CSS 전용 포트폴리오 시연입니다. 주문자 입력값은 이 화
 가상 주문 시연 · 실제 개인정보를 입력하지 마세요. 자동 입력 버튼으로 예시를 사용하세요. 입력한 주문자 정보는 저장하지 않습니다.|Demo order · Do not enter real personal data. Use the sample fill button. Customer input is not stored.|体験注文・実個人情報を入力せず自動入力を使用してください。入力した注文者情報は保存しません。`;
   for(const line of xtranslations.split('\n')){const [ko,en,ja]=line.split('|');catalog.strings[ko]={en,ja};}
   Object.assign(catalog.strings,{
-    '전체 메뉴':{en:'All menus',ja:'全メニュー'},'관리자 체험':{en:'Admin demo',ja:'管理者体験'},
+    '전체 메뉴':{en:'All menus',ja:'全メニュー'},'관리자 로그인':{en:'Admin login',ja:'管理者ログイン'},
     '선택한 날짜는 휴무입니다.':{en:'The selected date is closed.',ja:'選択日は定休日です。'},
     '가상 예약 승인':{en:'Demo reservation approved',ja:'体験予約承認済み'},'가상 예약 승인 대기':{en:'Awaiting demo approval',ja:'体験予約承認待ち'},
     '가상 문의 저장 완료':{en:'Demo inquiry saved locally',ja:'体験問い合わせを保存しました。'}
