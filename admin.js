@@ -1,4 +1,4 @@
-/* V30.1 Admin Studio — server auth or local-only test access. */
+/* V30.2 Admin Studio — server auth or isolated portfolio demo access. */
 (() => {
   'use strict';
   const S=globalThis.SkyCatStore,$=s=>document.querySelector(s);
@@ -32,7 +32,8 @@
   const cloud=globalThis.SkyCatCloud;
   const demo=globalThis.SkyCatAdminTestConfig||{};
   const localOrigin=()=>(location.protocol==='file:'&&!location.hostname)||(['http:','https:'].includes(location.protocol)&&['localhost','127.0.0.1','[::1]','::1'].includes(location.hostname));
-  const demoUsable=()=>demo.enabled===true&&typeof demo.email==='string'&&!!demo.email.trim()&&typeof demo.password==='string'&&!!demo.password&&!globalThis.SkyCatCloudConfig?.enabled&&!cloud?.usable()&&localOrigin();
+  const publicDemoOrigin=()=>demo.allowPublicDemo===true&&location.protocol==='https:'&&location.hostname==='chughwa-03.github.io'&&(!location.port||location.port==='443')&&location.pathname==='/chunghwa-SkyCatCafe/admin.html';
+  const demoUsable=()=>demo.enabled===true&&typeof demo.email==='string'&&!!demo.email.trim()&&typeof demo.password==='string'&&!!demo.password&&!globalThis.SkyCatCloudConfig?.enabled&&!cloud?.usable()&&(localOrigin()||publicDemoOrigin());
   const canLogin=()=>!!cloud?.usable()||demoUsable();
   let authMode=null;
   let signedIn=false,authBusy=false,cloudBusy=false,cloudEpoch=0,cloudFilter='all';
@@ -300,7 +301,7 @@
   const cloudKinds={cafe:'카페 주문',goods:'굿즈 주문',reservation:'예약',inquiry:'고객 문의'};
   const cloudStates={received:'접수',processing:'처리 중',completed:'처리 완료',cancelled:'취소'};
   function cloudDashboard(){
-    if(authMode==='demo')return panel('공용 접수 · 연결 보류',hint('로컬 테스트 로그인에서는 공용 데이터베이스에 연결하지 않습니다.'),hint('같은 브라우저의 주문·예약·문의 등은 각 로컬 관리 메뉴에서 검사하세요. Supabase 연결 후에만 다른 기기의 접수를 확인할 수 있습니다.'));
+    if(authMode==='demo')return panel('공용 접수 · 연결 보류',hint('테스트 로그인에서는 공용 데이터베이스에 연결하지 않습니다.'),hint('같은 브라우저의 주문·예약·문의 등은 각 로컬 관리 메뉴에서 검사하세요. Supabase 연결 후에만 다른 기기의 접수를 확인할 수 있습니다.'));
     const root=el('div');root.id='cloud-inbox';root.append(hint('공용 접수 기록을 불러오는 중…'));
     const p=panel('통합 공용 접수',hint('다른 기기의 시연 접수 내역 · 최근 200건 · 실제 거래 및 매장 예약 아님'),hint('접수 내용과 금액은 방문자 브라우저에서 전송된 시연 데이터입니다. 기존 로컬 메뉴·재고 관리에는 영향을 주지 않습니다.'),root);
     queueMicrotask(()=>loadCloud());return p;
@@ -337,21 +338,21 @@
     const badges={status:activeOrders().filter(o=>o.step<3).length,reservations:bookings().filter(r=>r.status==='pending').length,inquiries:exp.inquiries.filter(q=>!q.reply).length,stock:menus.filter(m=>!m.archived&&!S.available(m.id,conf,exp)).length,'goods-orders':goods.history().filter(o=>['received','packing','shipping'].includes(o.status)).length,'goods-stock':goods.list().filter(p=>!p.available).length};
     for(const entry of navEntries){if(entry.id===active)entry.link.setAttribute('aria-current','page');else entry.link.removeAttribute('aria-current');const n=badges[entry.id]||0;entry.badge.textContent=String(n);entry.badge.hidden=!n;}
     const view=renderers[active]();const nodes=Array.isArray(view)?view:[view];
-    if(active!=='cloud')nodes.unshift(el('p','cloud-local-banner',authMode==='demo'?'로컬 체험 · 테스트 로그인 모드 · 현재 브라우저의 시연 데이터만 사용합니다.':'로컬 체험 관리 · 현재 브라우저의 시연 데이터만 사용합니다. 다른 기기의 접수는 공용 접수 대시보드에서 확인하세요.'));
+    if(active!=='cloud')nodes.unshift(el('p','cloud-local-banner',authMode==='demo'?(publicDemoOrigin()?'공개 포트폴리오 시연 · 테스트 로그인 모드 · 실제 관리자 인증이 아니며 현재 브라우저의 가상 데이터만 사용합니다.':'로컬 체험 · 테스트 로그인 모드 · 현재 브라우저의 시연 데이터만 사용합니다.'):'로컬 체험 관리 · 현재 브라우저의 시연 데이터만 사용합니다. 다른 기기의 접수는 공용 접수 대시보드에서 확인하세요.'));
     $('#content').replaceChildren(...nodes);
   }
   function route(){const id=location.hash.slice(1);active=Object.hasOwn(renderers,id)?id:authMode==='demo'?'dashboard':'cloud';filter='';render();setNav(false);}
   function setNav(open){navOpen=open;$('#sidebar').classList.toggle('is-open',open);$('#nav-scrim').hidden=!open;$('#nav-toggle').setAttribute('aria-expanded',String(open));$('#nav-toggle').setAttribute('aria-label',open?'관리자 메뉴 닫기':'관리자 메뉴 열기');$('#nav-toggle').textContent=open?'×':'☰';}
   function filterNav(){const query=$('#nav-search').value.trim().toLowerCase();let count=0;for(const entry of navEntries){entry.link.hidden=!!query&&!entry.text.includes(query);if(!entry.link.hidden)count++;}for(const g of navGroups)g.title.hidden=g.entries.every(x=>x.link.hidden);$('#nav-count').textContent=String(count);$('#nav-empty').hidden=count!==0;}
   function buildNav(){const nav=$('#nav'),groups=[...new Set(sections.map(x=>x[2]))];for(const group of groups){const g={title:el('p','nav-group',group),entries:[]};navGroups.push(g);nav.append(g.title);for(const [id,title] of sections.filter(x=>x[2]===group)){const a=el('a','nav-link'),badge=el('span','nav-badge');badge.hidden=true;a.href='#'+id;a.append(el('span','nav-no',String(sections.findIndex(x=>x[0]===id)+1).padStart(2,'0')),el('strong','',title),badge);a.addEventListener('click',()=>{setNav(false);});const entry={id,link:a,badge,text:(title+' '+group+' '+id).toLowerCase()};navEntries.push(entry);g.entries.push(entry);nav.append(a);}}filterNav();}
-  function toggle(){ $('#login').hidden=signedIn;$('#workspace').hidden=!signedIn;$('#auth-mode-label').textContent=authMode==='demo'?'로컬 테스트 모드':'관리자 인증';if(signedIn)route();else $('#content').replaceChildren();}
+  function toggle(){ $('#login').hidden=signedIn;$('#workspace').hidden=!signedIn;$('#auth-mode-label').textContent=authMode==='demo'?(publicDemoOrigin()?'공개 시연 모드':'로컬 테스트 모드'):'관리자 인증';$('#admin-brand-home').href=authMode==='demo'?'#dashboard':'#cloud';if(signedIn)route();else $('#content').replaceChildren();}
   function lock(reason=''){const previous=authMode;signedIn=false;authMode=null;cloudEpoch++;$('#admin-pass').value='';$('#login-error').textContent=reason;toggle();if(previous==='cloud')cloud?.signOut();}
   const loginError=e=>e.code==='NOT_ADMIN'?'관리자로 등록되지 않은 계정입니다.':e.code==='NOT_CONFIGURED'?'Supabase 설정 또는 HTTP(S) 실행 환경을 확인하세요.':'로그인 실패 · 이메일, 비밀번호, 관리자 등록 및 연결 상태를 확인하세요.';
   $('#login-form').addEventListener('submit',async e=>{e.preventDefault();if(authBusy||!canLogin()||signedIn)return;authBusy=true;$('#login-submit').disabled=true;$('#login-error').textContent='인증 확인 중…';
     try{const email=$('#admin-id').value.trim(),pass=$('#admin-pass').value;
       if(demoUsable()){if(email.toLowerCase()!==demo.email.trim().toLowerCase()||pass!==demo.password)throw Object.assign(Error('Invalid test credentials'),{code:'TEST_DENIED'});authMode='demo';}
       else{await cloud.signIn(email,pass);authMode='cloud';}
-      signedIn=true;cloudEpoch++;$('#login-error').textContent='';toggle();}
+      signedIn=true;cloudEpoch++;$('#login-error').textContent='';if(authMode==='demo'&&(!location.hash||location.hash==='#cloud'))location.hash='#dashboard';toggle();$('#main').focus();}
     catch(e){signedIn=false;authMode=null;$('#login-error').textContent=e.code==='TEST_DENIED'?'테스트 이메일 또는 비밀번호가 일치하지 않습니다.':loginError(e);toggle();}
     finally{$('#admin-pass').value='';authBusy=false;$('#login-submit').disabled=!canLogin();}
   });
@@ -374,13 +375,14 @@
   buildNav();toggle();
   async function restore(){
     if(demoUsable()){
-      $('#login-desc').textContent='로컬 검수 전용 계정으로 로그인해 주세요.';
-      $('#login-mode-title').textContent='로컬 테스트 전용 · 실제 사용자 인증 아님';
-      $('#login-mode-desc').textContent='SQL 없이 같은 브라우저의 시연 기능을 검사합니다. 공개 사이트에서는 이 계정을 사용할 수 없습니다.';
+      const isPublic=publicDemoOrigin();
+      $('#login-desc').textContent=isPublic?'포트폴리오 시연 계정으로 로그인해 주세요.':'로컬 검수 전용 계정으로 로그인해 주세요.';
+      $('#login-mode-title').textContent=isPublic?'공개 시연 로그인 · 실제 관리자 인증 아님':'로컬 테스트 전용 · 실제 사용자 인증 아님';
+      $('#login-mode-desc').textContent=isPublic?'이 사이트에서는 공개 테스트 계정으로 가상 관리자 화면을 체험할 수 있습니다. 본인 브라우저의 가상 데이터만 사용하며 실제 운영·개인정보에는 접근하지 않습니다.':'SQL 없이 같은 브라우저의 시연 기능을 검사합니다.';
       $('#cloud-login-notice').textContent='테스트 계정: '+demo.email+' · 비밀번호는 admin-test-config.js에서 확인/변경하세요.';
       $('#login-submit').disabled=false;return;
     }
-    $('#cloud-login-notice').textContent=cloud?.usable()?'등록된 관리자만 인증할 수 있습니다.':localOrigin()?'연결 전 · supabase-config.js 또는 로컬 테스트 설정을 확인하세요.':'공개 주소에서는 테스트 로그인 불가 · Supabase 관리자 인증이 필요합니다.';
+    $('#cloud-login-notice').textContent=cloud?.usable()?'등록된 관리자만 인증할 수 있습니다.':localOrigin()?'연결 전 · supabase-config.js 또는 로컬 테스트 설정을 확인하세요.':'이 주소에서는 시연 로그인 비활성화 · 실제 관리자 인증에는 Supabase 연결이 필요합니다.';
     if(!cloud?.usable()){$('#login-submit').disabled=true;return;}
     authBusy=true;try{if(await cloud.resume()){authMode='cloud';signedIn=true;cloudEpoch++;toggle();}}finally{authBusy=false;$('#login-submit').disabled=false;}
   }

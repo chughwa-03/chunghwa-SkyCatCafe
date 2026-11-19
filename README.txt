@@ -1,4 +1,13 @@
-SKY CAT CAFE V30.1 — 로컬 테스트 관리자 로그인
+SKY CAT CAFE V30.2 — GitHub Pages 관리자 시연 로그인
+
+- 사용자 접속 경로: 랜딩 → 공식 홈페이지 → 관리자 로그인 → 올바른 테스트 계정 입력 → 기존 admin.html의 관리자 대시보드(`#dashboard`) 표시.
+- V30.1의 로컬 전용 제한 때문에 GitHub Pages에서 버튼이 비활성화되던 문제를 수정했습니다. `admin-test-config.js`의 `allowPublicDemo: true`로 지정된 실제 HTTPS 호스트·관리자 경로에서만 공개 시연을 허용합니다.
+- 테스트 계정: admin@skycatcafe.com / SkyCat2026! (공개 코드에 들어 있는 시연용 값, 실제 비밀번호 금지).
+- 공개 시연은 사용자의 현재 브라우저 데이터만 사용하며 실제 관리자 인증이 아닙니다. 공용 DB에 연결하지 않습니다. `allowPublicDemo: false`로 공개 시연을 끌 수 있습니다.
+- Supabase enabled가 true이면 테스트 계정은 비활성화되고 기존 서버 인증만 적용됩니다. 기존 23개 로컬 관리 기능, 고객 화면 및 EmailJS 설정 유지.
+- 변경 파일: admin.html, admin.js, admin-test-config.js. 검수 기록: QA_V30.2.md. 기존 GitHub 서버에 자동 배포한 것은 아닙니다.
+
+SKY CAT CAFE V30.1 — 로컬 테스트 관리자 로그인 (이전 기록)
 
 - Supabase 미설정 상태에서도 로컬 관리자 로그인 검수가 가능합니다. index.html 또는 admin.html을 같은 폴더에서 Live Server로 실행하세요 (localhost / 127.0.0.1 / ::1).
 - 테스트 이메일: admin@skycatcafe.com / 테스트 비밀번호: SkyCat2026!

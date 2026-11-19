@@ -16,15 +16,15 @@
   <script defer src="./supabase-config.js"></script>
   <script defer src="./skycat-cloud.js"></script>
   <script defer src="./skycat-email.js"></script>
-  <script defer src="./admin-test-config.js"></script>
-  <script defer src="./admin.js"></script>
+  <script defer src="./admin-test-config.js?v=30.2"></script>
+  <script defer src="./admin.js?v=30.2"></script>
 </head>
 <body>
   <a id="skip-link" class="skip" href="#main">본문 바로가기</a>
   <section id="login" class="login-wrap">
     <div class="login-card">
       <div class="login-brand"><div class="logo-icon" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="58" height="58" decoding="async"></div><div><strong>SKY CAT CAFE</strong><small>MANAGEMENT STUDIO</small></div></div>
-      <p class="eyebrow">ADMIN WORKSPACE · V30.1</p>
+      <p class="eyebrow">ADMIN WORKSPACE · V30.2</p>
       <h1>반가워요, 관리자님.</h1>
       <p class="login-desc" id="login-desc">등록된 관리자 계정으로 로그인해 주세요.</p>
       <form id="login-form">
@@ -33,6 +33,7 @@
         <button id="login-submit" type="submit" class="primary" disabled>관리자 로그인</button>
         <p id="login-error" role="alert"></p>
       </form>
+      <noscript><p role="alert">관리자 시연 화면을 열려면 JavaScript를 활성화해 주세요.</p></noscript>
       <div class="notice"><strong id="login-mode-title">관리자 전용 공간</strong><p id="login-mode-desc">Supabase 계정 인증 및 관리자 권한 확인 후 접속할 수 있습니다.</p><small id="cloud-login-notice">연결 상태 확인 중…</small></div>
       <a class="login-back" href="./index(order).html">← 고객 홈페이지로 돌아가기</a>
     </div>
@@ -40,7 +41,7 @@
   <div id="workspace" hidden>
     <button id="nav-scrim" class="nav-scrim" aria-label="관리자 메뉴 닫기" type="button" hidden></button>
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#cloud"><span class="paw" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="44" height="44" decoding="async"></span><div><strong>SKY CAT</strong><small>CAFE / ADMIN STUDIO</small></div></a>
+      <a class="brand" id="admin-brand-home" href="#cloud"><span class="paw" aria-hidden="true"><img src="./skycat-mascot.png" alt="" width="44" height="44" decoding="async"></span><div><strong>SKY CAT</strong><small>CAFE / ADMIN STUDIO</small></div></a>
       <div class="sidebar-head"><span>관리자 메뉴 <span id="nav-count" class="nav-count">24</span></span><button id="nav-close" class="nav-close" type="button" aria-label="관리자 메뉴 닫기">×</button></div>
       <label class="nav-search"><span aria-hidden="true">⌕</span><input id="nav-search" type="search" placeholder="메뉴 검색" aria-label="관리자 기능 검색" autocomplete="off"></label>
       <nav id="nav" aria-label="관리자 기능"></nav>
