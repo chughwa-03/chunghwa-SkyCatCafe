@@ -23,7 +23,7 @@
     ['goods-products','굿즈 상품 관리','굿즈 운영'],['goods-stock','굿즈 재고 관리','굿즈 운영'],['goods-orders','굿즈 주문 관리','굿즈 운영']
   ];
   const descriptions={dashboard:'오늘의 주문과 예약, 운영 현황을 한눈에 확인하세요.',orders:'접수된 가상 주문의 내역과 취소 상태를 확인하세요.',status:'접수부터 수령까지 주문 진행 단계를 관리하세요.',menu:'메뉴의 이름과 분류, 가격, 설명 및 표시 상태를 편집하세요.',stock:'판매 중지 및 재판매 여부를 관리하세요.',price:'고객 화면과 연동되는 메뉴 가격을 변경하세요.',reservations:'방문 예약을 확인하고 승인 또는 변경하세요.',seats:'창가석과 테이블석의 이용 가능 상태를 관리하세요.',sales:'기간별 가상 주문 금액과 주문 건수를 확인하세요.',bundles:'음료와 디저트 세트 조합 및 할인 금액을 관리하세요.',member:'스탬프, 쿠폰 수치와 적립 내역을 확인하세요.',gifts:'가상 기프트 코드를 발행하고 사용 상태를 확인하세요.',notices:'고객 화면에 표시할 카페 소식을 관리하세요.',inquiries:'접수된 고객 문의를 확인하고 답변하세요.',reviews:'방문 후기를 확인하고 표시 여부를 관리하세요.',satisfaction:'별점 및 만족 분야별 통계를 확인하세요.',hours:'영업시간과 정기 휴무일을 설정하세요.',inventory:'상품 수량과 원재료 재고를 관리하세요.',crowd:'자동 또는 수동으로 매장 혼잡도를 설정하세요.',faq:'자주 묻는 질문을 등록하고 수정하세요.'};
-  Object.assign(descriptions,{'goods-products':'47종 굿즈 이름, 가격 및 판매 여부를 관리합니다.','goods-stock':'굿즈 재고를 조정하고 품절 및 판매 상태를 확인합니다.','goods-orders':'굿즈 주문 접수, 상품 준비, 배송 및 취소를 관리합니다.'});
+  Object.assign(descriptions,{'goods-products':globalThis.SkyCatGoodsCatalog.length+'종 굿즈 이름, 가격 및 판매 여부를 관리합니다.','goods-stock':'굿즈 재고를 조정하고 품절 및 판매 상태를 확인합니다.','goods-orders':'굿즈 주문 접수, 상품 준비, 배송 및 취소를 관리합니다.'});
   let conf,exp,member,menus,active='dashboard',period='day',filter='',goodsRevision=0;
   const navEntries=[],navGroups=[],tableQueries=new Map();
   let navOpen=false,baseline='',dirty=false;
@@ -73,6 +73,20 @@
   function chart(rows){const result=el('div'),max=Math.max(1,...rows.map(x=>x[1]));for(const [text,num,value] of rows){const row=el('div','chart-row'),bar=el('div','chart-bar'),fill=el('i');fill.style.width=(num/max*100)+'%';bar.append(fill);row.append(el('span','',text),bar,el('strong','',value??String(num)));result.append(row);}return result;}
   function activeOrders(){return exp.orders.filter(o=>!o.cancelled);}
   function bookings(){return S.reservations(exp);}
+  function mailPanel(){
+    const api=globalThis.SkyCatEmail;
+    const status={disabled:'미설정 · 미발송',queued:'대기',sending:'발송 중',sent:'요청 성공',failed:'실패',uncertain:'결과 미확인','local-error':'저장 실패 · 미발송',serve:'HTTP(S) 필요'};
+    const rows=api?.history()||[];
+    const p=panel('EmailJS 운영 알림',
+      hint(api?.configured()?'설정값 입력 완료 · 실제 발송 여부는 아래 기록과 EmailJS History에서 확인하세요.':'미연결 · emailjs-config.js에 공개 설정값을 입력하면 알림을 사용할 수 있습니다.'),
+      hint('이 브라우저의 최근 100건까지만 표시합니다. 실제 주문·예약 및 결제 기능은 아닙니다.'),
+      table(['발생 시간 (KST)','알림 유형','접수 번호','이메일 상태'],rows.map(r=>[datetime(r.at),api.labels[r.kind]||r.kind,r.ref,pill(status[r.status]||'—',r.status==='sent'?'blue':['failed','uncertain','local-error','serve'].includes(r.status)?'bad':'')]))
+    );
+    p.id='skycat-admin-email-panel';return p;
+  }
+  function refreshMailPanel(){
+    const old=$('#skycat-admin-email-panel');if(signedIn&&active==='dashboard'&&old)old.replaceWith(mailPanel());
+  }
   function dashboard(){
     const today=S.day(),orders=activeOrders().filter(o=>S.day(o.at)===today),rev=orders.reduce((n,o)=>n+Number(o.total||0),0);
     const todayBookings=bookings().filter(r=>r.date===today&&r.status!=='cancelled');
@@ -85,7 +99,7 @@
     return [welcome,
       cards([['오늘 통합 주문액',money(rev+goodsRev),'카페 '+money(rev)+' · 굿즈 '+money(goodsRev)],['오늘 주문',orders.length+goodOrders.length+'건','카페 '+orders.length+'건 · 굿즈 '+goodOrders.length+'건'],['오늘 예약',todayBookings.length+'건','승인 및 대기'],['좌석 사용 제한',conf.blockedSeats.length+' / '+S.seats.length,'관리자 설정']]),
       panel('굿즈 운영 요약',cards([['오늘 굿즈 주문액',money(goodsRev)],['오늘 굿즈 주문',goodOrders.length+'건'],['판매 가능 굿즈',goods.list().filter(p=>p.available).length+'종'],['배송 진행 중',goods.history().filter(o=>['received','packing','shipping'].includes(o.status)).length+'건']]),actions(button('굿즈 주문 관리',()=>{location.hash='goods-orders';}),button('굿즈 상품 관리',()=>{location.hash='goods-products';}),button('굿즈 재고 관리',()=>{location.hash='goods-stock';}))),
-      analysis,panel('빠른 관리',quick),
+      analysis,panel('빠른 관리',quick),mailPanel(),
       panel('운영 요약',cards([['제조 중',activeOrders().filter(o=>o.step===1).length+'건'],['판매 가능 메뉴',menus.filter(m=>!m.archived&&S.available(m.id,conf,exp)).length+'종'],['가상 후기',exp.reviews.filter(r=>!r.hidden).length+'건'],['가상 기프트 잔액',money(exp.giftBalance)]]),hint('실제 영업 데이터가 아닌 동일 브라우저 내 고객의 시연 기록입니다.'))
     ];
   }
@@ -256,7 +270,7 @@
       const state=p.available?pill('판매 중'):pill(!p.active||p.componentAvailable===false?'판매 중지':'품절','bad');
       return [p.sku+'\n'+p.group,p.name,nameField,bundle?money(p.price)+' (자동 20% 할인)':price,activeField,state,saveBtn];
     });
-    return panel('굿즈 상품 정보 관리',hint('47종 상품의 이미지와 품목은 유지하고 이름·가격·판매 여부를 편집합니다. 이름 중복 불가. 키보드·마우스 세트 가격은 두 단품 합계에서 20% 할인됩니다.'),table(['SKU / 품목','현재 상품명','새 상품명','판매가 (원)','판매 설정','현재 상태','관리'],rows));
+    return panel('굿즈 상품 정보 관리',hint(rows.length+'종 상품의 이미지와 품목은 유지하고 이름·가격·판매 여부를 편집합니다. 이름 중복 불가. 키보드·마우스 세트 가격은 두 단품 합계에서 20% 할인됩니다.'),table(['SKU / 품목','현재 상품명','새 상품명','판매가 (원)','판매 설정','현재 상태','관리'],rows));
   }
   function goodsStockManager(){
     const products=goods.list();
@@ -305,7 +319,8 @@
   $('#content').addEventListener('input',markDirty);
   $('#content').addEventListener('change',markDirty);
   const remoteRefresh=()=>{if(!signedIn||snapshot()===baseline)return;if(dirty)message('다른 화면에서 정보가 갱신되었습니다. 입력값을 확인한 뒤 최신 정보를 불러와 다시 저장하세요.',true);else render();};
-  window.addEventListener('storage',e=>{if(e.key===null||e.key===G.KEY||Object.values(S.KEYS).includes(e.key))remoteRefresh();});
+  window.addEventListener('storage',e=>{if(e.key===globalThis.SkyCatEmail?.KEY)refreshMailPanel();if(e.key===null||e.key===G.KEY||Object.values(S.KEYS).includes(e.key))remoteRefresh();});
+  window.addEventListener('skycat:mail-status',refreshMailPanel);
   window.addEventListener('pageshow',e=>{if(e.persisted)remoteRefresh();});
   buildNav();toggle();
 })();

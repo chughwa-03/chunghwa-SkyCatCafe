@@ -1,0 +1,14 @@
+.skycat-mail-note,.skycat-mail-status {
+  margin:.55rem 0;
+  padding:.65rem .85rem;
+  color:#235e86;
+  background:#eff9ff;
+  border:1px solid #c4e2f5;
+  border-radius:12px;
+  font-size:.84rem;
+  line-height:1.55;
+  overflow-wrap:anywhere;
+}
+.skycat-mail-status[data-state="sent"] { color:#236542; background:#effaf1; border-color:#b6ddc0; }
+.skycat-mail-status:is([data-state="failed"],[data-state="uncertain"],[data-state="local-error"],[data-state="serve"]) { color:#8b481a; background:#fff6e8; border-color:#edcfa4; }
+.skycat-mail-status[hidden] { display:none !important; }

@@ -60,3 +60,47 @@ footer{padding:16px;text-align:center;color:#6e8799;font-size:11px}
 .login-field{display:grid;gap:7px}.nav-close,.nav-scrim{display:none}.sidebar-head>span{display:flex;gap:7px;align-items:center}.dashboard-grid{align-items:stretch;margin-bottom:18px}.dashboard-grid .panel{height:auto;margin-bottom:0}
 @media(max-width:740px){.sidebar{position:fixed;inset:0 auto 0 0;z-index:12;width:min(310px,88vw);height:100dvh;max-height:100dvh;box-shadow:8px 0 40px #0a2d4966}.nav-close{display:block;min-height:31px;background:#254c68;color:white;border-color:#6b899d;padding:0 9px;font-size:22px}.nav-scrim:not([hidden]){display:block;position:fixed;inset:0;z-index:11;width:100%;height:100%;padding:0;border:0;border-radius:0;background:#0c2d4999}.nav-scrim:hover:not(:disabled){background:#0c2d4999}}
 :root td .goods-admin-name{min-width:190px}
+
+/* V27: keep table scrolling local and wrap workspace controls on small screens. */
+.topbar,.table-tools,.dashboard-welcome { flex-wrap:wrap; }
+.topbar > *,.table-tools > *,.dashboard-welcome > * { min-width:0; max-width:100%; }
+.table-filter input { min-width:0; }
+.panel h2,.metric strong,.heading h1 { overflow-wrap:anywhere; }
+@media(max-width:450px){
+  #main { padding:12px; }
+  .login-card { padding:22px 16px; }
+  .login-brand { flex-wrap:wrap; }
+  .cards { gap:8px; }
+  .metric { padding:12px; }
+  .seat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:10px; gap:8px; }
+  .table-filter { flex:1 1 100%; }
+}
+
+
+/* =============================================================
+ * V28 FINAL FINISH — admin studio. Keep operational table geometry
+ * independent from customer pages and leave 23 actions unchanged.
+ * ============================================================= */
+:root { --finish-focus:#005e9b; --finish-border:#c6e2f3; --finish-shadow:0 7px 24px rgba(24,89,132,.10); }
+body { font-synthesis:none; font-variant-numeric:tabular-nums; }
+:where(a,button,select,input,textarea,summary):focus-visible {
+  outline:3px solid var(--finish-focus);
+  outline-offset:3px;
+}
+:where(.panel,.metric,.dashboard-welcome) { border-color:var(--finish-border); box-shadow:var(--finish-shadow); }
+:where(.panel,.metric,.dashboard-welcome) :where(h1,h2,h3,p,strong) { overflow-wrap:anywhere; }
+:where(.actions,.quick-links,.topbar,.dashboard-welcome) > * { min-width:0; }
+:where(button,input,select,textarea):disabled { cursor:not-allowed; opacity:.58; }
+:where(.primary,.refresh-btn,.customer-link,.quick-links button,.task-card) {
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+:where(.primary,.refresh-btn,.customer-link,.quick-links button):focus-visible { box-shadow:0 0 0 5px #deeffa; }
+@media(max-width:560px) {
+ .top-meta { white-space:normal; }
+ :where(.actions,.table-filter) { min-width:0; }
+ :where(.panel input,.panel select,.panel textarea) { max-width:100%; }
+}
+@media(prefers-reduced-motion:reduce) {
+ html { scroll-behavior:auto!important; }
+ :where(.primary,.refresh-btn,.customer-link,.quick-links button,.task-card) { transition:none!important; }
+}

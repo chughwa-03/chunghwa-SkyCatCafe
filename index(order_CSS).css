@@ -6848,3 +6848,69 @@ html:is([lang=en],[lang=ja]) #full-menu .poster-filter{white-space:normal;max-wi
 /* V10: visible recovery guidance if a required script or initialization fails. */
 .sc-init-error{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99999;width:min(680px,calc(100% - 32px));box-sizing:border-box;padding:16px 20px;background:#fff5e9;border:2px solid #c98438;border-radius:12px;color:#633b12;font-weight:700;box-shadow:0 6px 24px #173f6333;line-height:1.6}
 .sc-init-error button{margin-left:10px;padding:6px 14px;border:1px solid #b57935;border-radius:8px;background:#fff;color:#633b12;cursor:pointer}
+
+/* V27: narrow-screen controls and shorter landscape navigation. Keep poster geometry intact. */
+.mobile-nav nav{max-height:calc(100vh - 95px);max-height:calc(100dvh - 95px);overflow:auto;overscroll-behavior:contain}
+.sc-toolbar>*{min-width:0;max-width:100%}
+.sc-toolbar button,.sx-actions button,.sc-service-nav a{overflow-wrap:anywhere;white-space:normal}
+.sx-deal>div,.sc-recommend-info,.sx-balance{min-width:0;overflow-wrap:anywhere}
+@media(max-width:450px){
+  .header-in .brand{min-width:0;flex:1 1 auto}
+  .header-in .brand img{flex:0 0 auto}
+  .header-in .brand b,.header-in .brand small{overflow-wrap:anywhere}
+  .sc-toolbar .sc-input,.sc-toolbar .sc-select{flex:1 1 100%;width:100%}
+  .sx-actions .sc-input,.sx-actions .sc-select{min-width:0;flex:1 1 100%}
+  .order-cart-name,.order-cart-amount,.order-summary-row,.sc-service-card h3{overflow-wrap:anywhere}
+}
+
+
+/* =============================================================
+ * V28 FINAL FINISH — cafe UI. Style-only patch; preserves menu
+ * coordinates, currency logic, ordering and data synchronization.
+ * ============================================================= */
+:root { --finish-focus:#005e9b; --finish-border:#c6e2f3; --finish-shadow:0 7px 24px rgba(24,89,132,.10); }
+body { font-synthesis:none; font-variant-numeric:tabular-nums; }
+:where(a,button,summary,select,input,textarea,[role="button"]):focus-visible {
+  outline:3px solid var(--finish-focus);
+  outline-offset:3px;
+}
+:where(button,select,input,textarea) { font-family:inherit; }
+:where(button,[role="button"]):disabled,[aria-disabled="true"] { cursor:not-allowed; opacity:.58; }
+:where(.menu-card,.sc-service-card) { border-color:var(--finish-border); box-shadow:var(--finish-shadow); }
+:where(.sc-service-card,.menu-card) :where(h2,h3,p,strong,summary) { overflow-wrap:anywhere; }
+:where(.sc-btn,.pill,.mobile-nav summary,.to-top) {
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+:where(.sc-btn,.pill,.to-top):active { transform:translateY(1px); }
+:where(.sc-btn,.pill,.mobile-nav summary,.to-top):focus-visible { box-shadow:0 0 0 5px #e0f3ff; }
+:where(.sc-field-grid,.sc-service-grid,.form-grid) > * { min-width:0; }
+:where(.sc-service-card,.order-summary,.order-cart-row,.goods-teaser) { overflow-wrap:break-word; }
+@media (max-width:560px) {
+ .sc-service-card { border-radius:18px; }
+ :where(.sc-btn,.pill,.sc-service-nav a) { max-width:100%; white-space:normal; overflow-wrap:anywhere; }
+}
+@media (prefers-reduced-motion:reduce) {
+ html { scroll-behavior:auto!important; }
+ :where(.sc-btn,.pill,.menu-card,.to-top) { transition:none!important; }
+ :where(.sc-btn,.pill,.menu-card,.to-top):hover { transform:none!important; }
+}
+
+/* V28.3 — cafe space photos only; retain the two original photo cards. */
+@media (prefers-reduced-motion:no-preference) {
+  #gallery .gallery-frame.sc-space-fade {
+    opacity:0;
+    transition:opacity 1000ms ease-in-out;
+  }
+  #gallery .gallery-frame.sc-space-fade.sc-space-visible,
+  #gallery .gallery-frame.sc-space-fade:focus-within {
+    opacity:1;
+  }
+  body:has(#photo-zoom-exterior:checked) #zoom-exterior,
+  body:has(#photo-zoom-interior:checked) #zoom-interior {
+    animation:sc-space-photo-open 400ms ease-out both;
+  }
+  @keyframes sc-space-photo-open {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+}

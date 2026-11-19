@@ -381,3 +381,133 @@ html[data-sky="night"] .sky-parallax i{background:#b8d9ff;opacity:.10}
 html.motion-reduced *,html.motion-reduced *::before,html.motion-reduced *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 @media(max-width:760px){.season-special{grid-template-columns:1fr;gap:15px;padding:16px}.season-special-art{min-height:130px}.season-special-art img{height:145px}.daily-note{padding:16px}.sky-parallax i:nth-child(3){display:none}}
 @media(max-width:420px){.motion-setting{flex-wrap:wrap}.motion-setting .mood-button{width:100%}}
+
+/* V27: prevent long translated header and action labels from exceeding narrow screens. */
+@media(max-width:450px){
+  html.nav-ready .header-inner { flex-wrap:nowrap; gap:6px; }
+  .header-inner .brand { min-width:0; flex:1 1 auto; }
+  .header-inner .brand img { flex:0 0 auto; }
+  .header-inner .brand span { min-width:0; overflow-wrap:anywhere; }
+  .header-actions { flex:0 0 auto; }
+  .menu-content h3,.menu-content strong,.menu-content p,.section-heading h2 { overflow-wrap:anywhere; }
+  .gallery-controls>* { max-width:100%; min-width:0; }
+}
+@media(max-width:960px){
+  html.nav-ready .nav.is-open { max-height:calc(100vh - var(--header-height)); max-height:calc(100dvh - var(--header-height)); overflow:auto; overscroll-behavior:contain; }
+}
+
+
+/* =============================================================
+ * V28 FINAL FINISH — landing: typography, interactions, cards.
+ * Maintains existing seasonal/night visuals and 3.5 s gallery timing.
+ * ============================================================= */
+:root { --finish-focus:#005e9b; --finish-border:#c6e2f3; --finish-shadow:0 7px 24px rgba(24,89,132,.10); }
+body { font-synthesis:none; font-variant-numeric:tabular-nums; }
+:where(button,input,select,textarea) { font:inherit; }
+:where(a,button,select,input,textarea,summary,[role="button"]):focus-visible {
+  outline:3px solid var(--finish-focus);
+  outline-offset:3px;
+}
+:where(button,[role="button"]):disabled,[aria-disabled="true"] { cursor:not-allowed; opacity:.58; }
+:where(.value-card,.design-card,.menu-card,.story) {
+  border-color:var(--finish-border);
+  box-shadow:var(--finish-shadow);
+}
+:where(.value-card,.design-card,.menu-card,.story) > :where(h2,h3,p) { overflow-wrap:anywhere; }
+:where(.button,.mood-button,.icon-button,.gallery-play,.back-top) {
+  transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+:where(.button,.mood-button,.icon-button,.gallery-play,.back-top):active { transform:translateY(1px); }
+:where(.button,.mood-button,.icon-button,.gallery-play,.back-top):focus-visible { box-shadow:0 0 0 5px #dbf1ff; }
+:where(.section-heading,.hero-copy,.character-copy,.visit-text) { min-width:0; overflow-wrap:break-word; }
+:where(.section-heading,.hero-copy,.character-copy,.visit-text) :where(h1,h2,h3,p) { text-wrap:pretty; }
+:where(.menu-card,.design-card,.mood-panel) :where(img) { height:auto; max-width:100%; }
+@media (max-width:560px) {
+ .section-heading { margin-bottom:clamp(22px,6vw,36px); }
+ .section { padding-block:clamp(44px,12vw,70px); }
+ .hero h1 { overflow-wrap:anywhere; }
+}
+@media (prefers-reduced-motion:reduce) {
+ html { scroll-behavior:auto!important; }
+ :where(.transition-cloud,.hero-mascot.is-reaction,.character-main.is-reaction) { animation:none!important; }
+ :where(.button,.mood-button,.icon-button,.menu-card,.design-card) { transition:none!important; }
+ :where(.menu-card,.button,.mood-button,.icon-button):hover { transform:none!important; }
+}
+
+/* V28.1: gallery autoplay and library-free fallback */
+.gallery-interval { display:inline-flex; align-items:center; font-size:.8rem; font-weight:700; color:#315d7b; white-space:nowrap; }
+.gallery-play[aria-pressed="true"] { background:#d8f2ff; color:#084979; border-color:#57b6e7; }
+.gallery-play[aria-pressed="false"] { background:#fff; color:#445b6f; border-color:#a8becb; }
+/* V28.5: full-width horizontal push, without a fade or layout shift.
+   Both panels occupy one grid cell; the outer frame clips their motion. */
+.sky-swiper.skycat-gallery-slide { position:relative; isolation:isolate; overflow:hidden; }
+.sky-swiper.skycat-gallery-slide .swiper-wrapper {
+  position:relative; display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:0 !important; transform:none !important;
+  width:100%; height:auto;
+}
+.sky-swiper.skycat-gallery-slide .swiper-slide {
+  grid-area:1/1; display:block !important; position:relative;
+  width:100% !important; min-width:0;
+  opacity:0; visibility:hidden; pointer-events:none;
+  z-index:0;
+  transition:none;
+  transform:translate3d(0,0,0);
+}
+.sky-swiper.skycat-gallery-slide .swiper-slide.swiper-slide-active {
+  opacity:1; visibility:visible; pointer-events:auto; z-index:2;
+  transition:none;
+}
+.sky-swiper.skycat-gallery-slide .swiper-slide.skycat-gallery-leaving {
+  opacity:1; visibility:visible; pointer-events:none; z-index:1;
+  transition:none;
+}
+.sky-swiper.skycat-gallery-slide .swiper-slide .gallery-photo,
+.sky-swiper.skycat-gallery-slide .swiper-slide picture,
+.sky-swiper.skycat-gallery-slide .swiper-slide img { width:100%; }
+/* Clip the corners at the outer frame, not at the seam between moving panels. */
+.sky-swiper.skycat-gallery-slide .gallery-photo { border-radius:0; }
+.sky-swiper.skycat-gallery-slide.skycat-gallery-preparing .swiper-slide { transition:none !important; }
+@media(prefers-reduced-motion:reduce) {
+  .sky-swiper.skycat-gallery-slide .swiper-slide { transition:none !important; animation:none !important; }
+}
+@media(max-width:640px) { .gallery-interval { width:100%; justify-content:center; } }
+
+/* 04: matching translations form a continuous, opaque moving strip.
+   Next/auto: right to left. Previous: reverse direction. */
+@keyframes skycat-gallery-enter-right { from { transform:translate3d(100%,0,0); } to { transform:translate3d(0,0,0); } }
+@keyframes skycat-gallery-exit-left { from { transform:translate3d(0,0,0); } to { transform:translate3d(-100%,0,0); } }
+@keyframes skycat-gallery-enter-left { from { transform:translate3d(-100%,0,0); } to { transform:translate3d(0,0,0); } }
+@keyframes skycat-gallery-exit-right { from { transform:translate3d(0,0,0); } to { transform:translate3d(100%,0,0); } }
+@media (prefers-reduced-motion:no-preference) {
+  /* These two sections deliberately stay animated when the site's
+     decorative motion toggle is OFF; system reduced motion is still respected. */
+  #gallery .skycat-gallery-slide .skycat-gallery-entering,
+  #gallery .skycat-gallery-slide .skycat-gallery-leaving {
+    animation-duration:1200ms !important;
+    animation-timing-function:cubic-bezier(.4,0,.2,1);
+    animation-fill-mode:both;
+    animation-iteration-count:1;
+    will-change:transform;
+  }
+  #gallery .skycat-gallery-slide .skycat-gallery-entering { animation-name:skycat-gallery-enter-right; }
+  #gallery .skycat-gallery-slide .skycat-gallery-leaving { animation-name:skycat-gallery-exit-left; }
+  #gallery .skycat-gallery-slide.skycat-gallery-reverse .skycat-gallery-entering { animation-name:skycat-gallery-enter-left; }
+  #gallery .skycat-gallery-slide.skycat-gallery-reverse .skycat-gallery-leaving { animation-name:skycat-gallery-exit-right; }
+  /* 05: all cards and the heading move gently up and fade as the
+     viewport reaches them; layout dimensions and alternating sides stay fixed. */
+  #experience .skycat-story-reveal {
+    opacity:.12;
+    transform:translateY(24px);
+    transition:opacity 900ms cubic-bezier(.22,.61,.36,1),
+      transform 900ms cubic-bezier(.22,.61,.36,1),
+      border-color .35s ease, box-shadow .35s ease;
+    transition-duration:900ms,900ms,350ms,350ms !important;
+  }
+  #experience .skycat-story-reveal.skycat-story-visible,
+  #experience .skycat-story-reveal:focus-within {
+    opacity:1;
+    transform:translateY(0);
+  }
+}

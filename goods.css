@@ -195,3 +195,52 @@ html:not([lang=ko]) .goods-page .product-info h3,html:not([lang=ko]) .goods-page
   .goods-page footer { padding-bottom:120px; }
   .goods-toast { bottom:120px; }
 }
+
+/* V27: preserve independent shop layout while hardening narrow/short viewports. */
+.goods-page dialog { max-height:calc(100vh - 24px); max-height:calc(100dvh - 24px); overflow:auto; overscroll-behavior:contain; }
+.goods-page .cart-close { flex:0 0 36px; }
+.goods-page .cart-head h2,.goods-page .dialog-body h2,.goods-page .cart-summary,.goods-page .group-heading>div { min-width:0; overflow-wrap:anywhere; }
+.goods-page .cart-summary { flex-wrap:wrap; gap:8px; }
+.goods-page .dialog-actions>button,.goods-page .product-actions>button,.goods-page .variant { max-width:100%; white-space:normal; overflow-wrap:anywhere; }
+.goods-page .mobile-nav nav { max-height:calc(100vh - 95px); max-height:calc(100dvh - 95px); overflow:auto; overscroll-behavior:contain; }
+@media(max-width:450px){
+  .goods-page .brand img { flex:0 0 auto; }
+  .goods-page .brand b,.goods-page .brand small { overflow-wrap:anywhere; }
+  .goods-page .group-heading { flex-wrap:wrap; }
+  .goods-page .cart-summary { padding:12px; }
+  .goods-page .cart-summary #cart-total { font-size:clamp(17px,5.5vw,23px); }
+  .goods-page .product-actions>button { flex:1 1 100%; min-height:40px; }
+  .goods-page .cart-control { min-height:36px; }
+}
+@media(max-height:460px){
+  .goods-page #cart-dialog { max-height:calc(100dvh - 16px); }
+  .goods-page .cart-items { max-height:38vh; }
+}
+
+
+/* =============================================================
+ * V28 FINAL FINISH — isolated shop styles. No cafe CSS import.
+ * ============================================================= */
+.goods-page { font-synthesis:none; font-variant-numeric:tabular-nums; }
+.goods-page :where(a,button,input,select,summary,textarea):focus-visible {
+  outline:3px solid #005e9b;
+  outline-offset:3px;
+}
+.goods-page :where(.product-card,.menu-card) { border-color:#c6e2f3; box-shadow:0 7px 24px rgba(24,89,132,.10); }
+.goods-page :where(.product-info,.dialog-body,.cart-summary,.group-heading) { min-width:0; overflow-wrap:anywhere; }
+.goods-page :where(.pill,.goods-add,.detail-btn,.goods-buy,.goods-favorite,.goods-cart-float,.to-top) {
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.goods-page :where(.pill,.goods-add,.detail-btn,.goods-buy,.goods-favorite):active { transform:translateY(1px); }
+.goods-page :where(.product-photo,.goods-favorite,.goods-add,.goods-buy,.detail-btn):focus-visible { box-shadow:0 0 0 5px #e0f3ff; }
+.goods-page :where(button,input,select):disabled { cursor:not-allowed; opacity:.58; }
+.goods-page .product-photo img { max-width:100%; object-fit:contain; }
+.goods-page .goods-floating-actions { max-width:calc(100% - 24px); }
+@media(max-width:560px) {
+ .goods-page :where(.product-actions,.dialog-actions) { gap:8px; }
+ .goods-page .goods-floating-actions { right:12px; bottom:14px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .goods-page :where(.pill,.goods-add,.detail-btn,.goods-buy,.goods-favorite,.product-card) { transition:none!important; }
+ .goods-page :where(.pill,.goods-add,.detail-btn,.goods-buy,.product-card):hover { transform:none!important; }
+}

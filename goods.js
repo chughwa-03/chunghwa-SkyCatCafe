@@ -129,6 +129,8 @@
   const cartTitle = document.getElementById('cart-title');
   const cartItems = document.getElementById('cart-items');
   const checkout = document.getElementById('checkout-button');
+  const mailNote=document.createElement('p');
+  checkout.closest('.cart-footer').before(mailNote);globalThis.SkyCatEmail?.notice(mailNote,'goods');
   const cartContent = document.getElementById('cart-content');
   const success = document.getElementById('order-success');
   const toast = document.getElementById('goods-toast');
@@ -277,6 +279,7 @@
     cartContent.hidden = true;
     success.hidden = false;
     completedOrder=order;
+    globalThis.SkyCatEmail?.notify('goods',order,true);
     renderReceipt(order);
     success.querySelector('button').focus();
   });
@@ -288,6 +291,7 @@
     for (const item of order.items) {
       receipt.append(node('p',nameOf(item)+' × '+item.quantity+' · '+won(item.subtotal)));
     }
+    const mailStatus=node('p','');receipt.append(mailStatus);globalThis.SkyCatEmail?.bind(mailStatus,'goods',order.id);
   }
   document.getElementById('groups').addEventListener('click', event => {
     const favoriteButton=event.target.closest('button[data-favorite]');

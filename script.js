@@ -185,6 +185,11 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     pause: ['Pause', '一時停止'],
     play: ['Play', '再生'],
     motionPaused: ['Autoplay off', '自動再生オフ'],
+    galleryOn: ['Autoplay ON', '自動再生 ON'],
+    galleryOff: ['Autoplay OFF', '自動再生 OFF'],
+    galleryTurnOn: ['Turn autoplay on', '自動再生をオンにする'],
+    galleryTurnOff: ['Turn autoplay off', '自動再生をオフにする'],
+    galleryInterval: ['Every 3.5 sec', '3.5秒間隔'],
     goPhoto: ['Go to photo', '写真へ移動']
   };
   const korean = {
@@ -193,7 +198,10 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     heroTitle: '하늘처럼 맑고,\n고양이처럼 포근한 공간.',
     hoursValue: '화요일–일요일 09:00–21:00\n월요일 휴무 · 한국 시간',
     openMenu: '메뉴 열기', closeMenu: '메뉴 닫기',
-    pause: '일시정지', play: '재생', motionPaused: '자동 재생 끔', goPhoto: '사진 이동'
+    pause: '일시정지', play: '재생', motionPaused: '자동 재생 끔',
+    galleryOn: '자동 재생 ON', galleryOff: '자동 재생 OFF',
+    galleryTurnOn: '자동 재생 켜기', galleryTurnOff: '자동 재생 끄기',
+    galleryInterval: '3.5초 간격', goPhoto: '사진 이동'
   };
   const localeNodes = [];
   for (const [attribute, target] of [['data-i18n', null], ['data-label','aria-label'], ['data-alt','alt']]) {
@@ -203,9 +211,13 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
       localeNodes.push({node, key, target});
     }
   }
-  const state = {lang:'ko', navOpen:false, manualPause:false, visibleGallery:false, modalOpen:false, galleryFocus:false};
+  const galleryPreferenceKey = 'skycat:landing:gallery:autoplay';
+  let preferredAutoplay = null;
+  try { preferredAutoplay = localStorage.getItem(galleryPreferenceKey); } catch (_) { /* storage may be unavailable */ }
+  // First visit: autoplay enabled, except for users requesting reduced motion.
+  const state = {lang:'ko', navOpen:false, manualPause:preferredAutoplay === 'off' || (preferredAutoplay === null && motion.matches), visibleGallery:false, modalOpen:false, galleryFocus:false};
   let swiper = null, modalSource = null;
-  let galleryTimer = null, galleryFrame = null;
+  let galleryTimer = null;
   const galleryDelay = 3500;
   function tr(key) {
     const index = state.lang === 'en' ? 0 : state.lang === 'ja' ? 1 : -1;
@@ -324,12 +336,18 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     });
     queueScroll();
   }
-  // L03: the original locally bundled Swiper, 5 real images and no dependence on CDN.
+  // V28.1: explicit autoplay switch, independent of gallery scroll position.
+  // The gallery keeps a native fallback when the Swiper library is unavailable.
   function updateGalleryLabels() {
     const play = $('#gallery-play');
-    play.textContent = tr(motionReduced() ? 'motionPaused' : state.manualPause ? 'play' : 'pause');
-    play.disabled = motionReduced();
-    play.setAttribute('aria-pressed',String(state.manualPause || motionReduced()));
+    if (!play) return;
+    const active = !state.manualPause;
+    play.textContent = tr(active ? 'galleryOn' : 'galleryOff');
+    play.disabled = false;
+    play.setAttribute('aria-pressed', String(active));
+    play.setAttribute('aria-label', tr(active ? 'galleryTurnOff' : 'galleryTurnOn'));
+    const root = $('#gallery-swiper');
+    if (root) root.setAttribute('aria-live', active ? 'off' : 'polite');
     if (!swiper) return;
     $('#gallery-count').textContent = String(swiper.realIndex+1).padStart(2,'0')+' / 05';
     $$('#gallery-pagination .swiper-pagination-bullet').forEach((bullet,index) => {
@@ -343,12 +361,12 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
       if (link) link.tabIndex = isActive ? 0 : -1;
     }
   }
-  // V15: one explicit timer, independent of Swiper's internal autoplay lifecycle.
   function clearGalleryTimer() {
     if (galleryTimer !== null) { clearTimeout(galleryTimer); galleryTimer = null; }
   }
   function galleryBlocked() {
-    return !swiper || swiper.destroyed || !state.visibleGallery || state.manualPause || state.modalOpen || state.galleryFocus || motionReduced() || document.hidden;
+    // Intentional ON controls this slider; other page animations can remain disabled.
+    return !swiper || swiper.destroyed || state.manualPause || state.modalOpen || document.hidden;
   }
   function syncAutoplay(reset = false) {
     if (reset === true || galleryBlocked()) clearGalleryTimer();
@@ -362,50 +380,118 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     }
     updateGalleryLabels();
   }
-  function galleryVisibility() {
-    const rect = $('#gallery-swiper').getBoundingClientRect();
-    const visibleHeight = Math.min(rect.bottom,innerHeight)-Math.max(rect.top,0);
-    state.visibleGallery = rect.height > 0 && visibleHeight >= Math.min(rect.height*.25,150);
-    syncAutoplay();
-  }
-  function queueGalleryVisibility() {
-    if (galleryFrame !== null) return;
-    galleryFrame = requestAnimationFrame(() => { galleryFrame = null; galleryVisibility(); });
+  // V28.5: horizontal push slides, independent of the decorative motion toggle.
+  function initGallerySlide(root) {
+    const slides = $$('.swiper-slide', root);
+    root.classList.add('skycat-gallery-slide', 'skycat-gallery-preparing');
+    let index = 0;
+    let pending = null, sliding = false;
+    // Start loading and decoding all five embedded photos early.
+    for (const img of $$('img', root)) {
+      img.loading = 'eager';
+      img.decode?.().catch(() => {});
+    }
+    const slideGallery = {
+      realIndex: 0, destroyed: false,
+      params: {speed: motion.matches ? 0 : 1200}, slides,
+      slideNext: () => show((pending?.target ?? index) + 1, 1),
+      slidePrev: () => show((pending?.target ?? index) - 1, -1),
+      slideTo: target => show(target),
+      update: () => updateGalleryLabels()
+    };
+    function show(next, direction = 1) {
+      if (!slides.length) return;
+      const target = (next + slides.length) % slides.length;
+      if (sliding) {
+        pending = {target,direction};
+        syncAutoplay(true);
+        return;
+      }
+      if (target === index && slides[index].classList.contains('swiper-slide-active')) return;
+      const outgoing = slides[index];
+      const animate = outgoing.classList.contains('swiper-slide-active') && !motion.matches &&
+        !root.classList.contains('skycat-gallery-preparing');
+      if (animate) {
+        sliding = true;
+        root.classList.toggle('skycat-gallery-reverse',direction < 0);
+        outgoing.classList.add('skycat-gallery-leaving');
+      }
+      index = target;
+      slideGallery.realIndex = index;
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle('swiper-slide-active', active);
+        slide.setAttribute('aria-hidden', String(!active));
+        // Invisible slides must not be keyboard-focusable or clickable.
+        const link = $('.gallery-photo', slide);
+        if (link) link.tabIndex = active ? 0 : -1;
+      });
+      $$('#gallery-pagination .swiper-pagination-bullet').forEach((bullet, i) => {
+        bullet.classList.toggle('swiper-pagination-bullet-active', i === index);
+      });
+      syncAutoplay(true);
+      if (animate) {
+        const incoming = slides[index];
+        // Both full-width photos move with identical timing and easing.
+        let fallback;
+        function finish() {
+          clearTimeout(fallback);
+          incoming.removeEventListener('animationend', ended);
+          incoming.classList.remove('skycat-gallery-entering');
+          outgoing.classList.remove('skycat-gallery-leaving');
+          root.classList.remove('skycat-gallery-reverse');
+          sliding = false;
+          const queued = pending;
+          pending = null;
+          if (queued !== null && queued.target !== index) show(queued.target,queued.direction);
+        }
+        function ended(event) {
+          if (event.target === incoming && (event.animationName === 'skycat-gallery-enter-right' ||
+              event.animationName === 'skycat-gallery-enter-left')) finish();
+        }
+        incoming.addEventListener('animationend', ended);
+        incoming.classList.add('skycat-gallery-entering');
+        fallback = setTimeout(finish, 1300);
+      }
+    }
+    const pagination = $('#gallery-pagination');
+    pagination.replaceChildren();
+    for (let i = 0; i < slides.length; i++) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'swiper-pagination-bullet';
+      button.addEventListener('click', () => show(i));
+      pagination.append(button);
+    }
+    $('#gallery-prev').addEventListener('click', () => slideGallery.slidePrev());
+    $('#gallery-next').addEventListener('click', () => slideGallery.slideNext());
+    show(0);
+    // Keep all five slides in their initial state before enabling transitions.
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('skycat-gallery-preparing')));
+    return slideGallery;
   }
   function initGallery() {
-    if (typeof window.Swiper !== 'function') return; // static link grid fallback
     const root = $('#gallery-swiper');
-    swiper = new window.Swiper(root,{
-      slidesPerView:1, spaceBetween:12, loop:true, speed:motionReduced() ? 0 : 450,
-      autoplay:false,
-      navigation:{prevEl:'#gallery-prev',nextEl:'#gallery-next'},
-      pagination:{el:'#gallery-pagination',clickable:true,renderBullet:(index,className)=>'<button type="button" class="'+className+'"></button>'},
-      a11y:{enabled:false},
-      on:{slideChange:()=>requestAnimationFrame(()=>syncAutoplay(true))}
-    });
+    if (!root) return;
+    swiper = initGallerySlide(root);
     $('.gallery-controls').hidden = false;
     const shell = $('.gallery-shell');
     shell.addEventListener('keydown',event => {
       if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.matches('button,input,select,textarea')) return;
       event.preventDefault();
       if (event.key === 'ArrowLeft') swiper.slidePrev();
       else swiper.slideNext();
     });
-    // Keep keyboard focus safe, but a hovering mouse must not freeze the slide show.
-    root.addEventListener('focusin',event=>{state.galleryFocus=event.target.matches(':focus-visible');syncAutoplay();});
-    root.addEventListener('focusout',event=>{if(!root.contains(event.relatedTarget)){state.galleryFocus=false;syncAutoplay();}});
-    $('#gallery-play').addEventListener('click',()=>{state.manualPause=!state.manualPause;syncAutoplay();});
-    document.addEventListener('visibilitychange',syncAutoplay);
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(galleryVisibility,{threshold:[0,.25,.5,1]}).observe(root);
-    }
-    window.addEventListener('scroll',queueGalleryVisibility,{passive:true});
-    window.addEventListener('resize',queueGalleryVisibility,{passive:true});
-    window.addEventListener('load',galleryVisibility,{once:true});
+    $('#gallery-play').addEventListener('click',() => {
+      state.manualPause = !state.manualPause;
+      try { localStorage.setItem(galleryPreferenceKey, state.manualPause ? 'off' : 'on'); } catch (_) {}
+      syncAutoplay(true);
+    });
+    document.addEventListener('visibilitychange',()=>syncAutoplay(true));
     window.addEventListener('pagehide',clearGalleryTimer);
-    window.addEventListener('pageshow',galleryVisibility);
-    updateGalleryLabels();
-    galleryVisibility();
+    window.addEventListener('pageshow',()=>syncAutoplay(true));
+    syncAutoplay(true);
   }
   // L09: native dialog ensures Escape and keyboard focus containment.
   const dialog = $('#photo-dialog');
@@ -451,9 +537,34 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     for (const image of $$('.story img')) image.addEventListener('load',()=>window.AOS.refresh(),{once:true});
     window.addEventListener('load',()=>window.AOS.refresh(),{once:true});
   }
+  // V28.4: section 05 uses its own viewport reveal, independent of AOS.
+  // Each card enters only once; scrolling back never hides it again.
+  function initExperienceReveal() {
+    const elements = $$('#experience .section-heading, #experience .story');
+    if (!elements.length || !('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('skycat-story-visible');
+        observer.unobserve(entry.target);
+      }
+    }, {threshold:0.08, rootMargin:'0px 0px 30px 0px'});
+    for (const element of elements) {
+      // Avoid two independent animation engines changing opacity/transform.
+      element.removeAttribute('data-aos');
+      element.removeAttribute('data-aos-delay');
+      element.classList.remove('aos-init','aos-animate');
+      element.classList.add('skycat-story-reveal');
+      element.addEventListener('focusin', () => {
+        element.classList.add('skycat-story-visible');
+        observer.unobserve(element);
+      }, {once:true});
+      observer.observe(element);
+    }
+  }
   function updateMotion() {
     html.classList.toggle('motion-reduced',motionReduced());
-    if (swiper) { swiper.params.speed=motionReduced() ? 0 : 450;syncAutoplay(); }
+    if (swiper) { swiper.params.speed=motion.matches ? 0 : 1200; syncAutoplay(); }
     if (html.classList.contains('aos-ready')) window.AOS.refresh();
     updateGalleryLabels();
   }
@@ -461,7 +572,7 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
     try { fn(); } catch(error) { console.error('[SkyCat]',fn.name,error); }
   }
   // Isolate independent features so an unavailable vendor never hides the page.
-  [initOfficialLinks,initNavigation,initScroll,initLanguage,initPhotoModal,initGallery,initAOS,updateMotion].forEach(safeInit);
+  [initOfficialLinks,initNavigation,initScroll,initLanguage,initPhotoModal,initGallery,initExperienceReveal,initAOS,updateMotion].forEach(safeInit);
   motion.addEventListener('change',updateMotion);
   window.addEventListener('skycat:motion-change',updateMotion);
 })();
@@ -675,7 +786,7 @@ var Swiper=function(){"use strict";function e(e){return null!==e&&"object"==type
   const motionKey='skycat:landing:v17:motion', secretKey='skycat:landing:v17:secrets';
   const strings={
     motionTitle:['화면 애니메이션','Screen animation','画面のアニメーション'],
-    motionHelp:['구름, 캐릭터, 스크롤 효과와 사진 자동 전환을 조절합니다.','Control clouds, mascot effects, scrolling and automatic slides.','雲、キャラクター、スクロール効果と写真の自動切替を調整します。'],
+    motionHelp:['구름, 캐릭터 등 일반 효과를 조절합니다. 04 카페 공간과 05 카페 체험 효과는 항상 유지됩니다.','Control decorative effects such as clouds and the mascot. Gallery (04) and experience (05) effects stay enabled.','雲やキャラクターなどの演出を調整します。04 ギャラリーと05 カフェ体験の演出は常に有効です。'],
     motionOn:['애니메이션 켜짐','Animation on','アニメーション ON'],motionOff:['애니메이션 꺼짐','Animation off','アニメーション OFF'],motionSystem:['시스템 설정에 따라 꺼짐','Off by system preference','端末の設定により OFF'],
     seasonFeature:['계절별 시그니처 추천','Seasonal signature pick','季節のおすすめ'],seasonHint:['위에서 선택한 계절에 따라 추천 메뉴가 바뀝니다.','The recommendation follows your selected season.','選択した季節に合わせておすすめが変わります。'],
     spring:['봄','SPRING','春'],summer:['여름','SUMMER','夏'],autumn:['가을','AUTUMN','秋'],winter:['겨울','WINTER','冬'],
